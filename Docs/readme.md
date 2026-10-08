@@ -103,9 +103,10 @@ Aplicacion de Pagina Unica (SPA) construida con React para gestionar y explorar 
 | Lenguaje                  | TypeScript                                       |
 | Framework Frontend        | React                                            |
 | Build Tool                | Vite (`react-ts` template)                       |
+| Linter                    | Oxlint                                           |
 | API de Libros             | Open Library API                                 |
 | Estilizado                | CSS (plano)                                      |
-| Enrutamiento              | React Router DOM                                 |
+| Enrutamiento              | React Router 8 (`react-router`)                  |
 | Gestion de Estado         | React Context API + useReducer                   |
 | Persistencia de Datos     | Supabase (PostgreSQL gestionado)                 |
 | Despliegue                | VPS (frontend) + Supabase (base de datos/backend) |
@@ -119,13 +120,15 @@ src/
 ├── api/
 │   └── openLibrary.ts        # funciones para llamar a la API
 ├── components/
+│   ├── Layout.tsx             # header, navegacion y <Outlet />
 │   ├── BookCard.tsx
 │   ├── SearchBar.tsx
 │   └── FilterBar.tsx
 ├── pages/
 │   ├── Home.tsx
 │   ├── BookDetail.tsx
-│   └── MyLoans.tsx
+│   ├── MyLoans.tsx
+│   └── NotFound.tsx           # pagina 404
 ├── types/
 │   └── book.ts                # interfaces de TypeScript
 ├── context/
@@ -133,18 +136,21 @@ src/
 ├── hooks/
 │   └── useBooks.ts            # hook personalizado para fetch
 ├── App.tsx
-└── main.tsx
+├── main.tsx
+└── vite-env.d.ts              # tipos de las variables de entorno
 ```
 
 ---
 
 ## Comandos de Inicializacion
 
+Requisito: Node.js 22.22 o superior (exigido por React Router 8).
+
 ```bash
-npm create vite@latest biblioteca-universitaria -- --template react-ts
-cd biblioteca-universitaria
+npm create vite@latest capstone -- --template react-ts --no-eslint --no-immediate
+cd capstone
 npm install
-npm install react-router-dom
+npm install react-router
 npm run dev
 ```
 
@@ -158,3 +164,5 @@ npm run dev
   - Detalle de obra: `https://openlibrary.org/works/{id}.json`
 - Persistencia local: LocalStorage para historial de prestamos, lista de deseos y estado de lectura (mientras no haya backend/base de datos).
 - Paginacion: parametro `&page=` disponible en la API de busqueda.
+- Variables de entorno: `VITE_OPEN_LIBRARY_URL` y `VITE_COVERS_URL` en `.env`, tipadas en `src/vite-env.d.ts`. Solo las variables con prefijo `VITE_` llegan al navegador, por lo que son publicas.
+- Rutas: `/` (catalogo), `/libro/:id` (detalle; `id` es la clave de la obra sin `/works/`), `/mis-prestamos` y `*` (404).

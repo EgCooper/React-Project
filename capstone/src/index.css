@@ -15,8 +15,9 @@ body {
 }
 
 img {
-  /* quita el margen por defecto del navegador */
-  display: block;
   /* quita el espacio debajo de la imagen */
+  display: block;
+  /* hace que la imagen no se salga del contenedor */
   max-width: 100%;
+
 }

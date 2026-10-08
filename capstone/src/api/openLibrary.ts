@@ -1,4 +1,4 @@
-import type { BookSummary, SortOption} from '../types/book.ts'
+import type { BookDetail, BookSummary, SortOption } from '../types/book.ts'
 
 const API_URL = import.meta.env.VITE_OPEN_LIBRARY_URL
 const COVERS_URL = import.meta.env.VITE_COVERS_URL
@@ -31,6 +31,15 @@ function compareByAuthor(a: BookSummary, b: BookSummary): number {
   return authorCollator.compare(a.authors[0], b.authors[0])
 }
 
+// Formato de los IDs de obra de Open Library: OL + digitos + W (ej. OL82563W)
+const WORK_ID = /^OL\d+W$/
+const MAX_AUTHORS = 5
+const MAX_SUBJECTS = 10
+
+// [texto](url) -> texto, y \[ -> [ (Markdown que traen algunas descripciones)
+const MARKDOWN_LINK = /\[((?:\\.|[^\\\]])*)\]\([^)]*\)/g
+const MARKDOWN_ESCAPE = /\\([\\[\]()*_])/g
+
 interface SearchDoc {
   key: string
   title: string
@@ -42,6 +51,20 @@ interface SearchDoc {
 interface SearchResponse {
   numFound: number
   docs: SearchDoc[]
+}
+
+interface WorkResponse {
+  type: { key: string }
+  location?: string
+  title?: string
+  description?: string | { value: string }
+  authors?: { author?: { key: string } }[]
+  subjects?: string[]
+  covers?: number[]
+}
+
+interface AuthorResponse {
+  name?: string
 }
 
 export interface BookSearchOptions {
@@ -115,4 +138,72 @@ export async function searchBooks(
 
 export function getCoverUrl(coverId: number, size: 'S' | 'M' | 'L' = 'M'): string {
   return `${COVERS_URL}/b/id/${coverId}-${size}.jpg`
+}
+
+function toPlainText(text: string): string {
+  return text.replace(MARKDOWN_LINK, '$1').replace(MARKDOWN_ESCAPE, '$1').trim()
+}
+
+// null = la obra no existe (404); un error de red o del servidor lanza una excepcion
+async function fetchWork(id: string, signal?: AbortSignal): Promise<WorkResponse | null> {
+  const response = await fetch(`${API_URL}/works/${id}.json`, { signal })
+
+  if (response.status === 404) {
+    return null
+  }
+
+  if (!response.ok) {
+    throw new Error(`Open Library respondió con estado ${response.status}`)
+  }
+
+  return response.json()
+}
+
+// El autor es un dato secundario: si falla, se omite en lugar de romper la pagina
+async function getAuthorName(key: string, signal?: AbortSignal): Promise<string | null> {
+  const response = await fetch(`${API_URL}${key}.json`, { signal })
+
+  if (!response.ok) {
+    return null
+  }
+
+  const data: AuthorResponse = await response.json()
+  return data.name ?? null
+}
+
+export async function getBookDetail(id: string, signal?: AbortSignal): Promise<BookDetail | null> {
+  if (!WORK_ID.test(id)) {
+    return null
+  }
+
+  let work = await fetchWork(id, signal)
+
+  // Obras fusionadas: Open Library devuelve una redireccion con la obra correcta en `location`
+  if (work?.type.key === '/type/redirect' && work.location) {
+    work = await fetchWork(work.location.replace('/works/', ''), signal)
+  }
+
+  if (!work || work.type.key !== '/type/work') {
+    return null
+  }
+
+  const authorKeys = (work.authors ?? [])
+    .map((entry) => entry.author?.key)
+    .filter((key) => key !== undefined)
+    .slice(0, MAX_AUTHORS)
+  // Todos los autores en paralelo, no uno detras de otro
+  const authorNames = await Promise.all(authorKeys.map((key) => getAuthorName(key, signal)))
+
+  const description = typeof work.description === 'string' ? work.description : work.description?.value
+
+  return {
+    id,
+    title: work.title ?? 'Sin título',
+    authors: authorNames.filter((name) => name !== null),
+    description: description ? toPlainText(description) : null,
+    subjects: [...new Set(work.subjects ?? [])]
+      .filter((subject) => !subject.includes(':'))
+      .slice(0, MAX_SUBJECTS),
+    coverId: work.covers?.find((cover) => cover > 0) ?? null,
+  }
 }

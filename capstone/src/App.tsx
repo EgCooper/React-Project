@@ -4,6 +4,7 @@ import Home from './pages/Home.tsx'
 import BookDetail from './pages/BookDetail.tsx'
 import MyLoans from './pages/MyLoans.tsx'
 import NotFound from './pages/NotFound.tsx'
+import Register from './pages/Register.tsx'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="libro/:id" element={<BookDetail />} />
         <Route path="mis-prestamos" element={<MyLoans />} />
+        <Route path="registro" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

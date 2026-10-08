@@ -1,0 +1,27 @@
+.book-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.book-card__cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: #e5e5e5;
+}
+
+.book-card__cover--empty {
+  display: grid;
+  place-items: center;
+}
+
+.book-card__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.book-card__meta {
+  margin: 0;
+  font-size: 0.875rem;
+}

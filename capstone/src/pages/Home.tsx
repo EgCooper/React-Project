@@ -8,7 +8,7 @@ import Pagination from '../components/Pagination.tsx'
 import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
 import { AUTHOR_SORT_LIMIT, PAGE_SIZE } from '../api/openLibrary.ts'
 
-import './Home.css'
+import styles from './Home.module.css'
 
 const DEFAULT_QUERY = 'language:spa'
 const SEARCH_DELAY_MS = 400
@@ -101,7 +101,7 @@ function Home() {
             <p>No se encontraron libros.</p>
           ) : (
             <>
-              <ul className="book-grid" role="list">
+              <ul className={styles.grid} role="list">
                 {books.map((book) => (
                   <li key={book.id}>
                     <BookCard book={book} />

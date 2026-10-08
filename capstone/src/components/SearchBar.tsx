@@ -1,4 +1,4 @@
-import './SearchBar.css'
+import styles from './SearchBar.module.css'
 
 interface SearchBarProps {
   value: string
@@ -7,11 +7,11 @@ interface SearchBarProps {
 
 function SearchBar({ value, onChange }: SearchBarProps) {
   return (
-    <form className="search-bar" role="search" onSubmit={(event) => event.preventDefault()}>
+    <form className={styles.form} role="search" onSubmit={(event) => event.preventDefault()}>
       <label htmlFor="book-search">Buscar libros</label>
       <input
         id="book-search"
-        className="search-bar__input"
+        className={styles.input}
         type="search"
         value={value}
         onChange={(event) => onChange(event.target.value)}

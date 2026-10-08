@@ -1,5 +1,5 @@
 import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
-import './FilterBar.css'
+import styles from './FilterBar.module.css'
 
 interface FilterBarProps {
   category: string
@@ -10,12 +10,12 @@ interface FilterBarProps {
 
 function FilterBar({ category, sort, onCategoryChange, onSortChange }: FilterBarProps) {
   return (
-    <div className="filter-bar">
-      <div className="filter-bar__field">
+    <div className={styles.bar}>
+      <div className={styles.field}>
         <label htmlFor="category-filter">Categoría</label>
         <select
           id="category-filter"
-          className="filter-bar__select"
+          className={styles.select}
           value={category}
           onChange={(event) => onCategoryChange(event.target.value)}
         >
@@ -28,11 +28,11 @@ function FilterBar({ category, sort, onCategoryChange, onSortChange }: FilterBar
         </select>
       </div>
 
-      <div className="filter-bar__field">
+      <div className={styles.field}>
         <label htmlFor="sort-filter">Ordenar por</label>
         <select
           id="sort-filter"
-          className="filter-bar__select"
+          className={styles.select}
           value={sort}
           onChange={(event) => onSortChange(event.target.value)}
         >

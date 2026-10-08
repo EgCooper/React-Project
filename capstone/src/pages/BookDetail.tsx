@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { getCoverUrl } from '../api/openLibrary.ts'
 import { useBookDetail } from '../hooks/useBookDetail.ts'
-import './BookDetail.css'
+import styles from './BookDetail.module.css'
 
 function BookDetail() {
   const { id } = useParams()
@@ -15,11 +15,11 @@ function BookDetail() {
   return (
     <>
       {canGoBack ? (
-        <button type="button" className="book-detail__back" onClick={() => navigate(-1)}>
+        <button type="button" className={styles.back} onClick={() => navigate(-1)}>
           <span aria-hidden="true">←</span> Volver
         </button>
       ) : (
-        <Link to="/" className="book-detail__back">
+        <Link to="/" className={styles.back}>
           <span aria-hidden="true">←</span> Ir al catálogo
         </Link>
       )}
@@ -43,27 +43,27 @@ function BookDetail() {
       )}
 
       {state.status === 'success' && (
-        <article className="book-detail">
+        <article className={styles.detail}>
           {state.book.coverId !== null ? (
             <img
-              className="book-detail__cover"
+              className={styles.cover}
               src={getCoverUrl(state.book.coverId, 'L')}
               alt={`Portada de ${state.book.title}`}
             />
           ) : (
-            <div className="book-detail__cover book-detail__cover--empty" aria-hidden="true">
+            <div className={`${styles.cover} ${styles.coverEmpty}`} aria-hidden="true">
               Sin portada
             </div>
           )}
 
           <div>
             <h1>{state.book.title}</h1>
-            <p className="book-detail__authors">
+            <p>
               {state.book.authors.length > 0 ? state.book.authors.join(', ') : 'Autor desconocido'}
             </p>
 
             {state.book.subjects.length > 0 && (
-              <ul className="book-detail__subjects" role="list" aria-label="Géneros">
+              <ul className={styles.subjects} role="list" aria-label="Géneros">
                 {state.book.subjects.map((subject) => (
                   <li key={subject}>{subject}</li>
                 ))}
@@ -71,7 +71,7 @@ function BookDetail() {
             )}
 
             <h2>Descripción</h2>
-            <p className="book-detail__description">
+            <p className={styles.description}>
               {state.book.description ?? 'Este libro no tiene descripción.'}
             </p>
           </div>

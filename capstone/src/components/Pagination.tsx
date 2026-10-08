@@ -1,4 +1,4 @@
-import './Pagination.css'
+import styles from './Pagination.module.css'
 
 interface PaginationProps {
   page: number
@@ -12,21 +12,21 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
   }
 
   return (
-    <nav className="pagination" aria-label="Paginación de resultados">
+    <nav className={styles.pagination} aria-label="Paginación de resultados">
       <button
         type="button"
-        className="pagination__button"
+        className={styles.button}
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
       >
         Anterior
       </button>
-      <span className="pagination__status">
+      <span>
         Página {page.toLocaleString('es')} de {totalPages.toLocaleString('es')}
       </span>
       <button
         type="button"
-        className="pagination__button"
+        className={styles.button}
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
       >

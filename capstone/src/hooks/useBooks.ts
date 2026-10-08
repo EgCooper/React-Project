@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { searchBooks, type BookSearchOptions } from '../api/openLibrary.ts'
 import type { BookSummary } from '../types/book.ts'
 
@@ -34,6 +34,8 @@ function reducer(state: State, action: Action): State {
 
 export function useBooks({ query, page, subject, sort }: BookSearchOptions) {
   const [state, dispatch] = useReducer(reducer, initialState)
+  // Contador de reintentos: al cambiar, el efecto vuelve a pedir la misma busqueda
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -51,7 +53,11 @@ export function useBooks({ query, page, subject, sort }: BookSearchOptions) {
       })
 
     return () => controller.abort()
-  }, [query, page, subject, sort])
+  }, [query, page, subject, sort, attempt])
 
-  return state
+  function retry() {
+    setAttempt((current) => current + 1)
+  }
+
+  return { ...state, retry }
 }

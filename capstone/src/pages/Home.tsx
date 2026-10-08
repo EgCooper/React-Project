@@ -4,13 +4,21 @@ import SearchBar from '../components/SearchBar.tsx'
 import { useBooks } from '../hooks/useBooks.ts'
 import { useDebounce } from '../hooks/useDebounce.ts'
 import FilterBar from '../components/FilterBar.tsx'
+import Pagination from '../components/Pagination.tsx'
 import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
+import { PAGE_SIZE } from '../api/openLibrary.ts'
 
 import './Home.css'
 
 const DEFAULT_QUERY = 'language:spa'
 const SEARCH_DELAY_MS = 400
 const HAS_LETTER_OR_NUMBER = /[\p{L}\p{N}]/u
+
+// Convierte ?pagina= en un entero >= 1; cualquier otro valor ('abc', '-5', '2.5') vuelve a la pagina 1
+function parsePage(value: string | null): number {
+  const page = Number(value)
+  return Number.isInteger(page) && page >= 1 ? page : 1
+}
 
 function Home() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -22,8 +30,10 @@ function Home() {
   // La URL la puede editar cualquiera: solo aceptamos valores que existan en las listas
   const category = CATEGORIES.find((option) => option.value === searchParams.get('categoria'))?.value ?? null
   const sort = SORT_OPTIONS.find((option) => option.value === searchParams.get('orden'))?.value ?? 'relevance'
+  const page = parsePage(searchParams.get('pagina'))
 
-  const { books, total, isLoading, error } = useBooks({ query, page: 1, subject: category, sort })
+  const { books, total, isLoading, error, retry } = useBooks({ query, page, subject: category, sort })
+  const totalPages = Math.ceil(total / PAGE_SIZE)
 
   function updateParam(name: string, value: string) {
     setSearchParams(
@@ -33,10 +43,25 @@ function Home() {
         } else {
           params.delete(name)
         }
+        // Cualquier cambio de busqueda o filtro vuelve a la pagina 1
+        params.delete('pagina')
         return params
       },
       { replace: true },
     )
+  }
+
+  // Sin replace: cada pagina crea una entrada en el historial, asi "Atras" vuelve a la anterior
+  function goToPage(newPage: number) {
+    setSearchParams((params) => {
+      if (newPage > 1) {
+        params.set('pagina', String(newPage))
+      } else {
+        params.delete('pagina')
+      }
+      return params
+    })
+    window.scrollTo({ top: 0 })
   }
 
   return (
@@ -51,7 +76,14 @@ function Home() {
       />
 
       {isLoading && <p role="status">Cargando libros...</p>}
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <div>
+          <p role="alert">{error}</p>
+          <button type="button" onClick={retry}>
+            Reintentar
+          </button>
+        </div>
+      )}
 
       {!isLoading && !error && (
         <>
@@ -62,13 +94,16 @@ function Home() {
           {books.length === 0 ? (
             <p>No se encontraron libros.</p>
           ) : (
-            <ul className="book-grid" role="list">
-              {books.map((book) => (
-                <li key={book.id}>
-                  <BookCard book={book} />
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="book-grid" role="list">
+                {books.map((book) => (
+                  <li key={book.id}>
+                    <BookCard book={book} />
+                  </li>
+                ))}
+              </ul>
+              <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+            </>
           )}
         </>
       )}

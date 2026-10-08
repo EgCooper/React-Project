@@ -5,3 +5,4 @@ export interface BookSummary {
   coverId: number | null
   firstPublishYear: number | null
 }
+export type SortOption = 'relevance' | 'popular' | 'newest' | 'oldest'

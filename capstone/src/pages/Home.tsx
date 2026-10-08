@@ -3,6 +3,9 @@ import BookCard from '../components/BookCard.tsx'
 import SearchBar from '../components/SearchBar.tsx'
 import { useBooks } from '../hooks/useBooks.ts'
 import { useDebounce } from '../hooks/useDebounce.ts'
+import FilterBar from '../components/FilterBar.tsx'
+import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
+
 import './Home.css'
 
 const DEFAULT_QUERY = 'language:spa'
@@ -16,15 +19,19 @@ function Home() {
   const isSearching = HAS_LETTER_OR_NUMBER.test(debouncedText)
   const query = isSearching ? debouncedText : DEFAULT_QUERY
 
-  const { books, total, isLoading, error } = useBooks({ query, page: 1 })
+  // La URL la puede editar cualquiera: solo aceptamos valores que existan en las listas
+  const category = CATEGORIES.find((option) => option.value === searchParams.get('categoria'))?.value ?? null
+  const sort = SORT_OPTIONS.find((option) => option.value === searchParams.get('orden'))?.value ?? 'relevance'
 
-  function handleSearchChange(value: string) {
+  const { books, total, isLoading, error } = useBooks({ query, page: 1, subject: category, sort })
+
+  function updateParam(name: string, value: string) {
     setSearchParams(
       (params) => {
         if (value) {
-          params.set('q', value)
+          params.set(name, value)
         } else {
-          params.delete('q')
+          params.delete(name)
         }
         return params
       },
@@ -35,7 +42,13 @@ function Home() {
   return (
     <>
       <h1>Catálogo</h1>
-      <SearchBar value={searchText} onChange={handleSearchChange} />
+      <SearchBar value={searchText} onChange={(value) => updateParam('q', value)} />
+      <FilterBar
+        category={category ?? ''}
+        sort={sort}
+        onCategoryChange={(value) => updateParam('categoria', value)}
+        onSortChange={(value) => updateParam('orden', value)}
+      />
 
       {isLoading && <p role="status">Cargando libros...</p>}
       {error && <p role="alert">{error}</p>}

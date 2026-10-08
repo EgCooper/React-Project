@@ -32,7 +32,7 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export function useBooks({ query, page }: BookSearchOptions) {
+export function useBooks({ query, page, subject, sort }: BookSearchOptions) {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function useBooks({ query, page }: BookSearchOptions) {
 
     dispatch({ type: 'loading' })
 
-    searchBooks({ query, page }, controller.signal)
+    searchBooks({ query, page, subject, sort }, controller.signal)
       .then((result) => {
         dispatch({ type: 'success', payload: { books: result.books, total: result.total } })
       })
@@ -51,7 +51,7 @@ export function useBooks({ query, page }: BookSearchOptions) {
       })
 
     return () => controller.abort()
-  }, [query, page])
+  }, [query, page, subject, sort])
 
   return state
 }

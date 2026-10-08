@@ -1,0 +1,13 @@
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-block: 1rem;
+}
+
+.search-bar__input {
+  width: 100%;
+  max-width: 30rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}

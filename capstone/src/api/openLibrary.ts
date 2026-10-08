@@ -12,10 +12,24 @@ const SORT_PARAMS: Record<SortOption, string | null> = {
   popular: 'readinglog',
   newest: 'new',
   oldest: 'old',
+  author: null,
 }
 
 // Open Library tiene anios erroneos (0, 19, 2542...); al ordenar por fecha solo usamos anios plausibles
 const VALID_YEARS = `first_publish_year:[1450 TO ${new Date().getFullYear()}]`
+
+// Open Library no ordena por autor: pedimos este bloque de resultados y lo ordenamos en el navegador
+export const AUTHOR_SORT_LIMIT = 200
+
+const authorCollator = new Intl.Collator('es', { sensitivity: 'base' })
+
+// Negativo: a va antes; positivo: b va antes; 0: iguales. Los libros sin autor van al final
+function compareByAuthor(a: BookSummary, b: BookSummary): number {
+  if (a.authors.length === 0 && b.authors.length === 0) return 0
+  if (a.authors.length === 0) return 1
+  if (b.authors.length === 0) return -1
+  return authorCollator.compare(a.authors[0], b.authors[0])
+}
 
 interface SearchDoc {
   key: string
@@ -58,11 +72,13 @@ export async function searchBooks(
 ): Promise<BookSearchResult> {
   const isDateSort = sort === 'newest' || sort === 'oldest'
   const sortParam = SORT_PARAMS[sort]
+  const isAuthorSort = sort === 'author'
 
   const params = new URLSearchParams({
     q: isDateSort ? `${query} ${VALID_YEARS}` : query,
-    page: String(page),
-    limit: String(PAGE_SIZE),
+    // Al ordenar por autor siempre se pide el mismo bloque; la pagina la recorta slice()
+    page: isAuthorSort ? '1' : String(page),
+    limit: String(isAuthorSort ? AUTHOR_SORT_LIMIT : PAGE_SIZE),
     fields: SEARCH_FIELDS,
   })
 
@@ -81,9 +97,18 @@ export async function searchBooks(
   }
 
   const data: SearchResponse = await response.json()
+  const books = data.docs.map(toBookSummary)
+
+  if (isAuthorSort) {
+    const start = (page - 1) * PAGE_SIZE
+    return {
+      books: books.toSorted(compareByAuthor).slice(start, start + PAGE_SIZE),
+      total: data.numFound,
+    }
+  }
 
   return {
-    books: data.docs.map(toBookSummary),
+    books,
     total: data.numFound,
   }
 }

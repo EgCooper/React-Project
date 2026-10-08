@@ -6,7 +6,7 @@ import { useDebounce } from '../hooks/useDebounce.ts'
 import FilterBar from '../components/FilterBar.tsx'
 import Pagination from '../components/Pagination.tsx'
 import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
-import { PAGE_SIZE } from '../api/openLibrary.ts'
+import { AUTHOR_SORT_LIMIT, PAGE_SIZE } from '../api/openLibrary.ts'
 
 import './Home.css'
 
@@ -33,7 +33,10 @@ function Home() {
   const page = parsePage(searchParams.get('pagina'))
 
   const { books, total, isLoading, error, retry } = useBooks({ query, page, subject: category, sort })
-  const totalPages = Math.ceil(total / PAGE_SIZE)
+  // Al ordenar por autor solo se pueden recorrer los primeros AUTHOR_SORT_LIMIT resultados
+  const isAuthorSort = sort === 'author'
+  const pageableTotal = isAuthorSort ? Math.min(total, AUTHOR_SORT_LIMIT) : total
+  const totalPages = Math.ceil(pageableTotal / PAGE_SIZE)
 
   function updateParam(name: string, value: string) {
     setSearchParams(
@@ -91,6 +94,9 @@ function Home() {
             {total.toLocaleString('es')} resultados
             {isSearching && <> para «{debouncedText}»</>}
           </p>
+          {isAuthorSort && total > AUTHOR_SORT_LIMIT && (
+            <p>Ordenados por autor entre los {AUTHOR_SORT_LIMIT} resultados más relevantes.</p>
+          )}
           {books.length === 0 ? (
             <p>No se encontraron libros.</p>
           ) : (

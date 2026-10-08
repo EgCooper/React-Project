@@ -16,4 +16,5 @@ export const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'popular', label: 'Popularidad' },
   { value: 'newest', label: 'Más recientes' },
   { value: 'oldest', label: 'Más antiguos' },
+  { value: 'author', label: 'Autor (A-Z)' },
 ]

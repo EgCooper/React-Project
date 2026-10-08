@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type SubmitEvent } from 'react'
 import { Link, Navigate } from 'react-router'
 import { getAuthErrorMessage, signUp } from '../api/auth.ts'
+import FormField from '../components/FormField.tsx'
 import { useAuth } from '../hooks/useAuth.ts'
 import { PASSWORD_MIN_LENGTH, validateRegister, type RegisterErrors } from '../utils/validation.ts'
 import styles from './AuthForm.module.css'
@@ -57,67 +58,34 @@ function Register() {
       <h1>Crear cuenta</h1>
 
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
-        <div className={styles.field}>
-          <label htmlFor="register-email">Correo electrónico</label>
-          <input
-            id="register-email"
-            className={styles.input}
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? 'register-email-error' : undefined}
-          />
-          {errors.email && (
-            <p id="register-email-error" className={styles.error}>
-              {errors.email}
-            </p>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="register-password">Contraseña</label>
-          <input
-            id="register-password"
-            className={styles.input}
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            aria-invalid={Boolean(errors.password)}
-            aria-describedby={
-              errors.password ? 'register-password-hint register-password-error' : 'register-password-hint'
-            }
-          />
-          <p id="register-password-hint" className={styles.hint}>
-            Mínimo {PASSWORD_MIN_LENGTH} caracteres, con una mayúscula, una minúscula y un número.
-          </p>
-          {errors.password && (
-            <p id="register-password-error" className={styles.error}>
-              {errors.password}
-            </p>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="register-confirm">Confirmar contraseña</label>
-          <input
-            id="register-confirm"
-            className={styles.input}
-            type="password"
-            autoComplete="new-password"
-            value={confirmPassword}
-            onChange={(event) => setConfirmPassword(event.target.value)}
-            aria-invalid={Boolean(errors.confirmPassword)}
-            aria-describedby={errors.confirmPassword ? 'register-confirm-error' : undefined}
-          />
-          {errors.confirmPassword && (
-            <p id="register-confirm-error" className={styles.error}>
-              {errors.confirmPassword}
-            </p>
-          )}
-        </div>
+        <FormField
+          id="register-email"
+          label="Correo electrónico"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={setEmail}
+          error={errors.email}
+        />
+        <FormField
+          id="register-password"
+          label="Contraseña"
+          type="password"
+          autoComplete="new-password"
+          value={password}
+          onChange={setPassword}
+          error={errors.password}
+          hint={`Mínimo ${PASSWORD_MIN_LENGTH} caracteres, con una mayúscula, una minúscula y un número.`}
+        />
+        <FormField
+          id="register-confirm"
+          label="Confirmar contraseña"
+          type="password"
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={setConfirmPassword}
+          error={errors.confirmPassword}
+        />
 
         {serverError && (
           <p role="alert" className={styles.error}>

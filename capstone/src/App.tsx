@@ -3,6 +3,7 @@ import Layout from './components/Layout.tsx'
 import Home from './pages/Home.tsx'
 import BookDetail from './pages/BookDetail.tsx'
 import MyLoans from './pages/MyLoans.tsx'
+import Login from './pages/Login.tsx'
 import NotFound from './pages/NotFound.tsx'
 import Register from './pages/Register.tsx'
 
@@ -14,6 +15,7 @@ function App() {
         <Route path="libro/:id" element={<BookDetail />} />
         <Route path="mis-prestamos" element={<MyLoans />} />
         <Route path="registro" element={<Register />} />
+        <Route path="iniciar-sesion" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

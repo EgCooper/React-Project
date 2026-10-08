@@ -63,3 +63,26 @@ export function validateRegister(values: RegisterValues): RegisterErrors {
 
   return errors
 }
+
+export interface LoginValues {
+  email: string
+  password: string
+}
+
+export type LoginErrors = Partial<Record<keyof LoginValues, string>>
+
+// Al iniciar sesion solo se exige que haya contrasena: las reglas de formato son para crearla, no para usarla
+export function validateLogin(values: LoginValues): LoginErrors {
+  const errors: LoginErrors = {}
+
+  const emailError = validateEmail(values.email)
+  if (emailError) {
+    errors.email = emailError
+  }
+
+  if (!values.password) {
+    errors.password = 'Escribe tu contraseña.'
+  }
+
+  return errors
+}

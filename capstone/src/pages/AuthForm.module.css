@@ -5,27 +5,7 @@
   max-width: 24rem;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.input {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-
-/* El estilo de error usa el mismo atributo que lee el lector de pantalla */
-.input[aria-invalid='true'] {
-  border-color: #b00020;
-}
-
-.hint {
-  margin: 0;
-  font-size: 0.875rem;
-}
-
+/* Error del servidor (los errores de cada campo los muestra FormField) */
 .error {
   margin: 0;
   font-size: 0.875rem;

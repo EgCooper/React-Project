@@ -1,0 +1,147 @@
+/* Contenedor centrado compartido por header, main y footer */
+.container {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+/* "Saltar al contenido": fuera de la pantalla hasta que recibe el foco con Tab */
+.skipLink {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  transform: translateY(-200%);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.skipLink:hover {
+  color: var(--color-on-primary);
+}
+
+.header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Mobile-first: si no caben en una fila, los elementos bajan a la siguiente */
+.headerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+  padding-block: var(--space-3);
+}
+
+.brand {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: var(--color-primary);
+}
+
+.navList {
+  display: flex;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 44px de alto: tamaño mínimo recomendado para tocar con el dedo */
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+}
+
+/* NavLink agrega aria-current="page" al enlace de la página actual */
+.navLink[aria-current='page'] {
+  font-weight: 600;
+  border-bottom-color: var(--color-accent);
+}
+
+/* margin-left: auto empuja la sesión a la derecha, en la fila que le toque */
+.session {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+/* Correos largos se cortan con "…" en lugar de romper el header */
+.userEmail {
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.primaryLink {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  text-decoration: none;
+}
+
+/* Repite el color: la regla global a:hover lo volvería ilegible sobre el fondo del botón */
+.primaryLink:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-on-primary);
+}
+
+.main {
+  flex: 1;
+  padding-block: var(--space-6);
+}
+
+/* El main recibe el foco desde "Saltar al contenido"; no es interactivo, no necesita anillo */
+.main:focus {
+  outline: none;
+}
+
+.footer {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* Breakpoints del proyecto: 640px (detalle del libro) y 768px (márgenes más amplios) */
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-6);
+  }
+
+  .main {
+    padding-block: var(--space-8);
+  }
+}

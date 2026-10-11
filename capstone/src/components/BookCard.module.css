@@ -8,7 +8,7 @@
   width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
-  background: #e5e5e5;
+  background: var(--color-surface-muted);
 }
 
 .coverEmpty {

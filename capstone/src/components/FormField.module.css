@@ -11,7 +11,7 @@
 
 /* El estilo de error usa el mismo atributo que lee el lector de pantalla */
 .input[aria-invalid='true'] {
-  border-color: #b00020;
+  border-color: var(--color-danger);
 }
 
 .hint {
@@ -22,5 +22,5 @@
 .error {
   margin: 0;
   font-size: 0.875rem;
-  color: #b00020;
+  color: var(--color-danger);
 }

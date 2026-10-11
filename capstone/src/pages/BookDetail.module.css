@@ -14,7 +14,7 @@
   max-width: 300px;
   aspect-ratio: 2 / 3;
   object-fit: cover;
-  background: #e5e5e5;
+  background: var(--color-surface-muted);
 }
 
 .coverEmpty {
@@ -33,7 +33,7 @@
 .subjects li {
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
-  background: #eee;
+  background: var(--color-surface-muted);
   font-size: 0.875rem;
 }
 

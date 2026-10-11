@@ -3,7 +3,7 @@ import type { BookDetail, BookSummary, SortOption } from '../types/book.ts'
 const API_URL = import.meta.env.VITE_OPEN_LIBRARY_URL
 const COVERS_URL = import.meta.env.VITE_COVERS_URL
 
-export const PAGE_SIZE = 20
+export const PAGE_SIZE = 14
 const SEARCH_FIELDS = 'key,title,author_name,cover_i,first_publish_year'
 
 // Traduce el orden de la app al parametro `sort` de Open Library (null = orden por defecto)

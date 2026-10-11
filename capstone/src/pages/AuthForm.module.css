@@ -9,7 +9,7 @@
 .error {
   margin: 0;
   font-size: 0.875rem;
-  color: #b00020;
+  color: var(--color-danger);
 }
 
 /* 44px de alto: tamano minimo recomendado para tocar con el dedo */

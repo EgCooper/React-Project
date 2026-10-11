@@ -1,19 +1,37 @@
+/* Móvil: los tres elementos no caben en una fila de 360px,
+   así que el texto va arriba y los botones abajo, mitad y mitad */
 .pagination {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'status status'
+    'previous next';
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-block: 1.5rem;
+  gap: var(--space-3);
+  margin-block-start: var(--space-8);
 }
 
-/* 44px de alto: tamano minimo recomendado para tocar con el dedo */
-.button {
-  min-height: 2.75rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+.previous {
+  grid-area: previous;
 }
 
-.button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+.next {
+  grid-area: next;
+}
+
+.status {
+  grid-area: status;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Desde 640px caben en una fila: Anterior · Página X de Y · Siguiente */
+@media (min-width: 640px) {
+  .pagination {
+    grid-template-columns: auto auto auto;
+    grid-template-areas: 'previous status next';
+    justify-content: center;
+    gap: var(--space-4);
+  }
 }

@@ -1,12 +1,11 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
 }
 
 .input {
-  padding: 0.5rem;
-  font-size: 1rem;
+  width: 100%;
 }
 
 /* El estilo de error usa el mismo atributo que lee el lector de pantalla */
@@ -16,11 +15,12 @@
 
 .hint {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
 .error {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--color-danger);
 }

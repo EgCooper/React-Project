@@ -22,15 +22,19 @@ function BookCard({ book }: BookCardProps) {
           Sin portada
         </div>
       )}
-      <h2 className={styles.title}>
-        <Link to={`/libro/${book.id}`}>{book.title}</Link>
-      </h2>
-      <p className={styles.meta}>
-        {book.authors.length > 0 ? book.authors.join(', ') : 'Autor desconocido'}
-      </p>
-      {book.firstPublishYear !== null && (
-        <p className={styles.meta}>{book.firstPublishYear}</p>
-      )}
+      <div className={styles.body}>
+        <h2 className={styles.title}>
+          <Link to={`/libro/${book.id}`} className={styles.link}>
+            {book.title}
+          </Link>
+        </h2>
+        <p className={`${styles.meta} ${styles.authors}`}>
+          {book.authors.length > 0 ? book.authors.join(', ') : 'Autor desconocido'}
+        </p>
+        {book.firstPublishYear !== null && (
+          <p className={`${styles.meta} ${styles.year}`}>{book.firstPublishYear}</p>
+        )}
+      </div>
     </article>
   )
 }

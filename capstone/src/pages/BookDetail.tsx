@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { getCoverUrl } from '../api/openLibrary.ts'
 import { useBookDetail } from '../hooks/useBookDetail.ts'
+import buttonStyles from '../styles/buttons.module.css'
 import styles from './BookDetail.module.css'
 
 function BookDetail() {
@@ -29,7 +30,7 @@ function BookDetail() {
       {state.status === 'error' && (
         <div>
           <p role="alert">No se pudo cargar el libro.</p>
-          <button type="button" onClick={retry}>
+          <button type="button" className={buttonStyles.primary} onClick={retry}>
             Reintentar
           </button>
         </div>
@@ -56,9 +57,9 @@ function BookDetail() {
             </div>
           )}
 
-          <div>
-            <h1>{state.book.title}</h1>
-            <p>
+          <div className={styles.info}>
+            <h1 className={styles.title}>{state.book.title}</h1>
+            <p className={styles.authors}>
               {state.book.authors.length > 0 ? state.book.authors.join(', ') : 'Autor desconocido'}
             </p>
 
@@ -70,7 +71,7 @@ function BookDetail() {
               </ul>
             )}
 
-            <h2>Descripción</h2>
+            <h2 className={styles.sectionTitle}>Descripción</h2>
             <p className={styles.description}>
               {state.book.description ?? 'Este libro no tiene descripción.'}
             </p>

@@ -1,13 +1,9 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-block: 1rem;
+  gap: var(--space-1);
 }
 
 .input {
   width: 100%;
-  max-width: 30rem;
-  padding: 0.5rem;
-  font-size: 1rem;
 }

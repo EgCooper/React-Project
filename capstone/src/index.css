@@ -41,6 +41,7 @@
   --radius-md: 8px;
   --radius-full: 999px;
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 8%);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 10%);
 }
 
 /* ===== Tema oscuro: solo cambian los colores ===== */
@@ -60,6 +61,7 @@
     --color-danger: #e8968e;
     --color-focus: #aab5c1;
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+    --shadow-md: 0 4px 12px rgb(0 0 0 / 50%);
   }
 }
 
@@ -97,7 +99,9 @@ h3 {
   line-height: 1.2;
 }
 
+/* Sin margen arriba: el main ya tiene padding */
 h1 {
+  margin-block: 0 var(--space-4);
   font-size: var(--font-size-2xl);
 }
 
@@ -117,10 +121,17 @@ img {
   max-width: 100%;
 }
 
+label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
 /* Los controles de formulario no heredan la fuente ni el color por defecto */
+/* 44px de alto: tamaño mínimo recomendado para tocar con el dedo */
 button,
 input,
 select {
+  min-height: 2.75rem;
   font: inherit;
   color: inherit;
 }
@@ -131,6 +142,11 @@ select {
   background: var(--color-surface);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
+}
+
+/* El gris por defecto del navegador no llega al contraste mínimo */
+input::placeholder {
+  color: var(--color-text-muted);
 }
 
 button {

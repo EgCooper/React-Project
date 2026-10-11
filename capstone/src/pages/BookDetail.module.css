@@ -1,43 +1,92 @@
+/* "Volver" puede ser <button> o <Link>: los dos se ven como un botón sin borde con flecha.
+   El margen negativo alinea el texto con el borde del contenido */
 .back {
-  display: inline-block;
-  margin-block-end: 1rem;
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  margin: 0 0 var(--space-4) calc(-1 * var(--space-3));
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* El <button> ya recibe este fondo de la regla global; el <Link> lo necesita aquí */
+.back:hover {
+  background: var(--color-surface-muted);
+  color: var(--color-primary-hover);
 }
 
 .detail {
   display: grid;
-  gap: 1.5rem;
+  gap: var(--space-6);
 }
 
+/* En móvil la portada es más chica para que el título aparezca sin hacer scroll */
 .cover {
   width: 100%;
-  max-width: 300px;
+  max-width: 14rem;
   aspect-ratio: 2 / 3;
   object-fit: cover;
   background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .coverEmpty {
   display: grid;
   place-items: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* min-width: 0 + break-word: una palabra o URL muy larga se parte en lugar de ensanchar la columna */
+.info {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.title {
+  margin-block-end: var(--space-2);
+}
+
+.authors {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
 }
 
 .subjects {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
+  margin: var(--space-6) 0 0;
   padding: 0;
   list-style: none;
 }
 
 .subjects li {
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  background: var(--color-surface-muted);
-  font-size: 0.875rem;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
 }
 
+.sectionTitle {
+  margin: var(--space-8) 0 var(--space-2);
+  font-size: var(--font-size-lg);
+}
+
+/* 65ch: unas 65 letras por línea, el ancho más cómodo para leer párrafos */
 .description {
+  max-width: 65ch;
+  margin: 0;
   white-space: pre-line;
 }
 
@@ -45,5 +94,9 @@
   .detail {
     grid-template-columns: 300px 1fr;
     align-items: start;
+  }
+
+  .cover {
+    max-width: none;
   }
 }

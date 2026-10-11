@@ -7,7 +7,7 @@ import FilterBar from '../components/FilterBar.tsx'
 import Pagination from '../components/Pagination.tsx'
 import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
 import { AUTHOR_SORT_LIMIT, PAGE_SIZE } from '../api/openLibrary.ts'
-
+import buttonStyles from '../styles/buttons.module.css'
 import styles from './Home.module.css'
 
 const DEFAULT_QUERY = 'language:spa'
@@ -70,19 +70,21 @@ function Home() {
   return (
     <>
       <h1>Catálogo</h1>
-      <SearchBar value={searchText} onChange={(value) => updateParam('q', value)} />
-      <FilterBar
-        category={category ?? ''}
-        sort={sort}
-        onCategoryChange={(value) => updateParam('categoria', value)}
-        onSortChange={(value) => updateParam('orden', value)}
-      />
+      <div className={styles.toolbar}>
+        <SearchBar value={searchText} onChange={(value) => updateParam('q', value)} />
+        <FilterBar
+          category={category ?? ''}
+          sort={sort}
+          onCategoryChange={(value) => updateParam('categoria', value)}
+          onSortChange={(value) => updateParam('orden', value)}
+        />
+      </div>
 
       {isLoading && <p role="status">Cargando libros...</p>}
       {error && (
         <div>
           <p role="alert">{error}</p>
-          <button type="button" onClick={retry}>
+          <button type="button" className={buttonStyles.primary} onClick={retry}>
             Reintentar
           </button>
         </div>
@@ -90,12 +92,14 @@ function Home() {
 
       {!isLoading && !error && (
         <>
-          <p>
+          <p className={styles.summary}>
             {total.toLocaleString('es')} resultados
             {isSearching && <> para «{debouncedText}»</>}
           </p>
           {isAuthorSort && total > AUTHOR_SORT_LIMIT && (
-            <p>Ordenados por autor entre los {AUTHOR_SORT_LIMIT} resultados más relevantes.</p>
+            <p className={styles.summary}>
+              Ordenados por autor entre los {AUTHOR_SORT_LIMIT} resultados más relevantes.
+            </p>
           )}
           {books.length === 0 ? (
             <p>No se encontraron libros.</p>

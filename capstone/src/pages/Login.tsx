@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation } from 'react-router'
 import { getAuthErrorMessage, signIn } from '../api/auth.ts'
 import FormField from '../components/FormField.tsx'
 import { useAuth } from '../hooks/useAuth.ts'
+import buttonStyles from '../styles/buttons.module.css'
 import { validateLogin, type LoginErrors } from '../utils/validation.ts'
 import styles from './AuthForm.module.css'
 
@@ -69,8 +70,8 @@ function Login() {
   }
 
   return (
-    <>
-      <h1>Iniciar sesión</h1>
+    <div className={styles.card}>
+      <h1 className={styles.title}>Iniciar sesión</h1>
 
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
         <FormField
@@ -98,15 +99,19 @@ function Login() {
           </p>
         )}
 
-        <button type="submit" className={styles.submit} disabled={isSubmitting}>
+        <button
+          type="submit"
+          className={`${buttonStyles.primary} ${styles.submit}`}
+          disabled={isSubmitting}
+        >
           {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
         </button>
       </form>
 
-      <p>
+      <p className={styles.switch}>
         ¿No tienes cuenta? <Link to="/registro">Crea una</Link>
       </p>
-    </>
+    </div>
   )
 }
 

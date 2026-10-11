@@ -80,31 +80,35 @@ function Home() {
         />
       </div>
 
-      {isLoading && <p role="status">Cargando libros...</p>}
-      {error && (
+      {error ? (
         <div>
           <p role="alert">{error}</p>
           <button type="button" className={buttonStyles.primary} onClick={retry}>
             Reintentar
           </button>
         </div>
-      )}
-
-      {!isLoading && !error && (
+      ) : (
         <>
-          <p className={styles.summary}>
-            {total.toLocaleString('es')} resultados
-            {isSearching && <> para «{debouncedText}»</>}
+          {/* Siempre presente: el lector de pantalla anuncia cada cambio de texto ("Cargando..." → "120 resultados") */}
+          <p className={styles.summary} role="status">
+            {isLoading ? (
+              'Cargando libros...'
+            ) : (
+              <>
+                {total.toLocaleString('es')} resultados
+                {isSearching && <> para «{debouncedText}»</>}
+              </>
+            )}
           </p>
-          {isAuthorSort && total > AUTHOR_SORT_LIMIT && (
+          {!isLoading && isAuthorSort && total > AUTHOR_SORT_LIMIT && (
             <p className={styles.summary}>
               Ordenados por autor entre los {AUTHOR_SORT_LIMIT} resultados más relevantes.
             </p>
           )}
-          {books.length === 0 ? (
-            <p>No se encontraron libros.</p>
-          ) : (
-            <>
+
+          {books.length > 0 ? (
+            // Mientras llega la nueva búsqueda se siguen viendo los resultados anteriores, atenuados
+            <div className={styles.results} aria-busy={isLoading}>
               <ul className={styles.grid} role="list">
                 {books.map((book) => (
                   <li key={book.id}>
@@ -113,7 +117,9 @@ function Home() {
                 ))}
               </ul>
               <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
-            </>
+            </div>
+          ) : (
+            !isLoading && <p>No se encontraron libros.</p>
           )}
         </>
       )}

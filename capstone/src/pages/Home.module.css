@@ -25,6 +25,15 @@
   list-style: none;
 }
 
+.results {
+  transition: opacity 0.2s ease;
+}
+
+/* aria-busy="true" mientras llega la nueva búsqueda: los resultados anteriores se atenúan */
+.results[aria-busy='true'] {
+  opacity: 0.5;
+}
+
 /* El buscador toma el espacio libre (1fr) y los filtros solo el que necesitan (auto) */
 @media (min-width: 1024px) {
   .toolbar {

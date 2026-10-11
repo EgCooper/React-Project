@@ -119,11 +119,6 @@
   padding-block: var(--space-6);
 }
 
-/* El main recibe el foco desde "Saltar al contenido"; no es interactivo, no necesita anillo */
-.main:focus {
-  outline: none;
-}
-
 .footer {
   padding-block: var(--space-4);
   border-top: 1px solid var(--color-border);

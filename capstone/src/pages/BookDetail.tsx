@@ -1,7 +1,9 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { getCoverUrl } from '../api/openLibrary.ts'
+import ErrorMessage from '../components/ErrorMessage.tsx'
+import PageTitle from '../components/PageTitle.tsx'
 import { useBookDetail } from '../hooks/useBookDetail.ts'
-import buttonStyles from '../styles/buttons.module.css'
+import skeletonStyles from '../styles/skeleton.module.css'
 import styles from './BookDetail.module.css'
 
 function BookDetail() {
@@ -13,8 +15,16 @@ function BookDetail() {
   // 'default' = se abrio esta URL directamente (no hay pagina anterior dentro de la app)
   const canGoBack = location.key !== 'default'
 
+  const pageTitle =
+    state.status === 'success'
+      ? state.book.title
+      : state.status === 'not-found'
+        ? 'Libro no encontrado'
+        : 'Detalle del libro'
+
   return (
     <>
+      <PageTitle title={pageTitle} />
       {canGoBack ? (
         <button type="button" className={styles.back} onClick={() => navigate(-1)}>
           <span aria-hidden="true">←</span> Volver
@@ -25,16 +35,29 @@ function BookDetail() {
         </Link>
       )}
 
-      {state.status === 'loading' && <p role="status">Cargando libro...</p>}
-
-      {state.status === 'error' && (
-        <div>
-          <p role="alert">No se pudo cargar el libro.</p>
-          <button type="button" className={buttonStyles.primary} onClick={retry}>
-            Reintentar
-          </button>
-        </div>
+      {state.status === 'loading' && (
+        <>
+          <p role="status" className={styles.loadingText}>
+            Cargando libro...
+          </p>
+          {/* Relleno con la misma distribución que el detalle: portada, título, autor y descripción */}
+          <div className={styles.detail} aria-hidden="true">
+            <div className={`${skeletonStyles.block} ${styles.cover}`} />
+            <div className={styles.info}>
+              <div className={`${skeletonStyles.block} ${styles.skeletonTitle}`} />
+              <div className={`${skeletonStyles.block} ${styles.skeletonAuthor}`} />
+              <div className={styles.skeletonText}>
+                <div className={skeletonStyles.block} />
+                <div className={skeletonStyles.block} />
+                <div className={skeletonStyles.block} />
+                <div className={skeletonStyles.block} />
+              </div>
+            </div>
+          </div>
+        </>
       )}
+
+      {state.status === 'error' && <ErrorMessage message="No se pudo cargar el libro." onRetry={retry} />}
 
       {state.status === 'not-found' && (
         <>

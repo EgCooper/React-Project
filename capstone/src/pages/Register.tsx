@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, type SubmitEvent } from 'react'
 import { Link, Navigate } from 'react-router'
 import { getAuthErrorMessage, signUp } from '../api/auth.ts'
+import ErrorMessage from '../components/ErrorMessage.tsx'
 import FormField from '../components/FormField.tsx'
+import PageTitle from '../components/PageTitle.tsx'
 import { useAuth } from '../hooks/useAuth.ts'
 import buttonStyles from '../styles/buttons.module.css'
 import { PASSWORD_MIN_LENGTH, validateRegister, type RegisterErrors } from '../utils/validation.ts'
@@ -56,6 +58,7 @@ function Register() {
 
   return (
     <div className={styles.card}>
+      <PageTitle title="Crear cuenta" />
       <h1 className={styles.title}>Crear cuenta</h1>
 
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -88,11 +91,7 @@ function Register() {
           error={errors.confirmPassword}
         />
 
-        {serverError && (
-          <p role="alert" className={styles.error}>
-            {serverError}
-          </p>
-        )}
+        {serverError && <ErrorMessage message={serverError} />}
 
         <button
           type="submit"

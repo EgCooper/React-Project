@@ -22,13 +22,6 @@
   gap: var(--space-4);
 }
 
-/* Error del servidor (los errores de cada campo los muestra FormField) */
-.error {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-danger);
-}
-
 .submit {
   width: 100%;
   margin-block-start: var(--space-2);

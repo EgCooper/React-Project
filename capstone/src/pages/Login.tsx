@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, type SubmitEvent } from 'react'
 import { Link, Navigate, useLocation } from 'react-router'
 import { getAuthErrorMessage, signIn } from '../api/auth.ts'
+import ErrorMessage from '../components/ErrorMessage.tsx'
 import FormField from '../components/FormField.tsx'
+import PageTitle from '../components/PageTitle.tsx'
 import { useAuth } from '../hooks/useAuth.ts'
 import buttonStyles from '../styles/buttons.module.css'
 import { validateLogin, type LoginErrors } from '../utils/validation.ts'
@@ -71,6 +73,7 @@ function Login() {
 
   return (
     <div className={styles.card}>
+      <PageTitle title="Iniciar sesión" />
       <h1 className={styles.title}>Iniciar sesión</h1>
 
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -93,11 +96,7 @@ function Login() {
           error={errors.password}
         />
 
-        {serverError && (
-          <p role="alert" className={styles.error}>
-            {serverError}
-          </p>
-        )}
+        {serverError && <ErrorMessage message={serverError} />}
 
         <button
           type="submit"

@@ -1,0 +1,13 @@
+/* Bloque de relleno que "late" mientras llega el contenido real.
+   Ocupa el mismo lugar que el contenido, así la página no salta al terminar de cargar */
+.block {
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-sm);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}

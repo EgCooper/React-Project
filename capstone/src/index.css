@@ -16,6 +16,7 @@
   --color-on-primary: #ffffff;
   --color-accent: #7a6248;
   --color-danger: #9e3a32;
+  --color-danger-surface: #f8ecea;
   --color-focus: #4b5663;
 
   /* Tipografía: fuentes del sistema, sin descargas */
@@ -59,6 +60,7 @@
     --color-on-primary: #1b1c1e;
     --color-accent: #c7a983;
     --color-danger: #e8968e;
+    --color-danger-surface: #3a2624;
     --color-focus: #aab5c1;
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
     --shadow-md: 0 4px 12px rgb(0 0 0 / 50%);
@@ -172,6 +174,12 @@ button:disabled {
   outline-offset: 2px;
 }
 
+/* tabindex="-1" (main, h1): reciben el foco por código para orientar al lector de pantalla,
+   pero no son interactivos, así que no necesitan el anillo */
+[tabindex='-1']:focus {
+  outline: none;
+}
+
 /* Respeta a quien pidió menos animaciones en su sistema */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -179,5 +187,7 @@ button:disabled {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    /* Sin esto, una animación infinita de 0.01ms parpadearía sin parar */
+    animation-iteration-count: 1 !important;
   }
 }

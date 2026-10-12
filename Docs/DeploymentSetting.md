@@ -142,7 +142,6 @@ Con email + contrasena y la confirmacion de correo desactivada, el login funcion
 
 Variables: `VITE_OPEN_LIBRARY_URL`, `VITE_COVERS_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`.
 
-## Pruebas unitarias
 
 
 

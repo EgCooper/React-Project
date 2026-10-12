@@ -10,17 +10,12 @@ import Pagination from '../components/Pagination.tsx'
 import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
 import { AUTHOR_SORT_LIMIT, PAGE_SIZE } from '../api/openLibrary.ts'
 import skeletonStyles from '../styles/skeleton.module.css'
+import { parsePage } from '../utils/url.ts'
 import styles from './Home.module.css'
 
 const DEFAULT_QUERY = 'language:spa'
 const SEARCH_DELAY_MS = 400
 const HAS_LETTER_OR_NUMBER = /[\p{L}\p{N}]/u
-
-// Convierte ?pagina= en un entero >= 1; cualquier otro valor ('abc', '-5', '2.5') vuelve a la pagina 1
-function parsePage(value: string | null): number {
-  const page = Number(value)
-  return Number.isInteger(page) && page >= 1 ? page : 1
-}
 
 function Home() {
   const [searchParams, setSearchParams] = useSearchParams()

@@ -6,24 +6,9 @@ import FormField from '../components/FormField.tsx'
 import PageTitle from '../components/PageTitle.tsx'
 import { useAuth } from '../hooks/useAuth.ts'
 import buttonStyles from '../styles/buttons.module.css'
+import { getRedirectPath } from '../utils/url.ts'
 import { validateLogin, type LoginErrors } from '../utils/validation.ts'
 import styles from './AuthForm.module.css'
-
-// Pagina a la que volver tras iniciar sesion. Solo rutas internas ("/..."), nunca otra web ("//sitio.com")
-function getRedirectPath(state: unknown): string {
-  if (
-    typeof state === 'object' &&
-    state !== null &&
-    'from' in state &&
-    typeof state.from === 'string' &&
-    state.from.startsWith('/') &&
-    !state.from.startsWith('//')
-  ) {
-    return state.from
-  }
-
-  return '/'
-}
 
 function Login() {
   const { user, isLoading } = useAuth()

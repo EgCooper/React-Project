@@ -1,31 +1,10 @@
 import { screen } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
+import { sessionResponse } from '../test/auth.ts'
+import { SUPABASE_AUTH_URL } from '../test/handlers.ts'
 import { renderApp } from '../test/renderApp.tsx'
 import { server } from '../test/server.ts'
-
-// Misma URL falsa que define vite.config.ts en test.env
-const SUPABASE_AUTH_URL = 'https://supabase.test/auth/v1'
-
-// Respuesta de Supabase a un inicio de sesión correcto (forma real, datos falsos)
-function sessionResponse(email: string) {
-  return HttpResponse.json({
-    access_token: 'token-de-prueba',
-    token_type: 'bearer',
-    expires_in: 3600,
-    expires_at: Math.floor(Date.now() / 1000) + 3600,
-    refresh_token: 'refresh-de-prueba',
-    user: {
-      id: '11111111-1111-1111-1111-111111111111',
-      aud: 'authenticated',
-      role: 'authenticated',
-      email,
-      app_metadata: { provider: 'email' },
-      user_metadata: {},
-      created_at: new Date().toISOString(),
-    },
-  })
-}
 
 describe('Inicio de sesión y rutas protegidas (integración)', () => {
   it('valida el formulario sin llamar a Supabase y enfoca el primer campo inválido', async () => {
@@ -61,7 +40,6 @@ describe('Inicio de sesión y rutas protegidas (integración)', () => {
   it('sin sesión, "Mis préstamos" lleva al login; al entrar vuelve ahí y "Cerrar sesión" la protege de nuevo', async () => {
     server.use(
       http.post(`${SUPABASE_AUTH_URL}/token`, () => sessionResponse('ana@correo.com')),
-      http.post(`${SUPABASE_AUTH_URL}/logout`, () => new HttpResponse(null, { status: 204 })),
     )
     const { user } = renderApp('/mis-prestamos')
 

@@ -3,32 +3,31 @@ import { searchBooks, type BookSearchOptions } from '../api/openLibrary.ts'
 import type { BookSummary } from '../types/book.ts'
 
 interface State {
+  // A qué búsqueda pertenecen los datos (parámetros + intento)
+  key: string | null
   books: BookSummary[]
   total: number
-  isLoading: boolean
   error: string | null
 }
 
 type Action =
-  | { type: 'loading' }
-  | { type: 'success'; payload: { books: BookSummary[]; total: number } }
-  | { type: 'error'; payload: string }
+  | { type: 'success'; key: string; books: BookSummary[]; total: number }
+  | { type: 'error'; key: string; message: string }
 
 const initialState: State = {
+  key: null,
   books: [],
   total: 0,
-  isLoading: true,
   error: null,
 }
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'loading':
-      return { ...state, isLoading: true, error: null }
     case 'success':
-      return { ...state, books: action.payload.books, total: action.payload.total, isLoading: false, error: null }
+      return { key: action.key, books: action.books, total: action.total, error: null }
     case 'error':
-      return { ...state, isLoading: false, error: action.payload }
+      // Los libros anteriores se conservan: se siguen viendo (atenuados) al reintentar
+      return { ...state, key: action.key, error: action.message }
   }
 }
 
@@ -36,28 +35,37 @@ export function useBooks({ query, page, subject, sort }: BookSearchOptions) {
   const [state, dispatch] = useReducer(reducer, initialState)
   // Contador de reintentos: al cambiar, el efecto vuelve a pedir la misma busqueda
   const [attempt, setAttempt] = useState(0)
+  // Identifica la búsqueda actual; si los datos guardados son de otra, todavía está cargando
+  const requestKey = JSON.stringify([query, page, subject, sort, attempt])
 
   useEffect(() => {
     const controller = new AbortController()
 
-    dispatch({ type: 'loading' })
-
     searchBooks({ query, page, subject, sort }, controller.signal)
       .then((result) => {
-        dispatch({ type: 'success', payload: { books: result.books, total: result.total } })
+        dispatch({ type: 'success', key: requestKey, books: result.books, total: result.total })
       })
       .catch(() => {
         if (!controller.signal.aborted) {
-          dispatch({ type: 'error', payload: 'No se pudieron cargar los libros. Intenta de nuevo.' })
+          dispatch({ type: 'error', key: requestKey, message: 'No se pudieron cargar los libros. Intenta de nuevo.' })
         }
       })
 
     return () => controller.abort()
-  }, [query, page, subject, sort, attempt])
+  }, [query, page, subject, sort, requestKey])
+
+  // isLoading se deriva en vez de guardarse: no hace falta un dispatch('loading') dentro del efecto
+  const isLoading = state.key !== requestKey
 
   function retry() {
     setAttempt((current) => current + 1)
   }
 
-  return { ...state, retry }
+  return {
+    books: state.books,
+    total: state.total,
+    isLoading,
+    error: isLoading ? null : state.error,
+    retry,
+  }
 }

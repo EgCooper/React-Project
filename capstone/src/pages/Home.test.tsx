@@ -1,6 +1,7 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import { delay, http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
+import { SUPABASE_REST_URL } from '../test/handlers.ts'
 import { SEARCH_URL, searchResponse } from '../test/openLibraryMocks.ts'
 import { renderApp } from '../test/renderApp.tsx'
 import { server } from '../test/server.ts'
@@ -59,6 +60,23 @@ describe('Catálogo (integración)', () => {
     expect(newCard.closest('[aria-busy]')).toHaveAttribute('aria-busy', 'false')
     expect(screen.queryByRole('link', { name: 'Cien años de soledad' })).not.toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent('1 resultados para «harry»')
+  })
+
+  it('muestra la disponibilidad de cada libro con una sola consulta para toda la página', async () => {
+    const availabilityRequests: unknown[] = []
+    mockSearch(() => searchResponse(DEFAULT_BOOKS))
+    server.use(
+      http.post(`${SUPABASE_REST_URL}/rpc/get_availability`, async ({ request }) => {
+        availabilityRequests.push(await request.json())
+        return HttpResponse.json([{ work_id: 'OL2W', due_at: '2026-12-01T12:00:00Z', queue_length: 0, my_queue_position: null }])
+      }),
+    )
+    renderApp('/')
+
+    const cards = await screen.findAllByRole('article')
+    expect(await within(cards[0]).findByText('Disponible')).toBeInTheDocument()
+    expect(within(cards[1]).getByText('Prestado')).toBeInTheDocument()
+    expect(availabilityRequests).toEqual([{ work_ids: ['OL1W', 'OL2W'] }])
   })
 
   it('filtrar por categoría envía la categoría a Open Library', async () => {

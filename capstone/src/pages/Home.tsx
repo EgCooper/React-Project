@@ -4,12 +4,15 @@ import ErrorMessage from '../components/ErrorMessage.tsx'
 import PageTitle from '../components/PageTitle.tsx'
 import SearchBar from '../components/SearchBar.tsx'
 import { useBooks } from '../hooks/useBooks.ts'
+import { useAvailability } from '../hooks/useAvailability.ts'
 import { useDebounce } from '../hooks/useDebounce.ts'
+import { useLibrary } from '../hooks/useLibrary.ts'
 import FilterBar from '../components/FilterBar.tsx'
 import Pagination from '../components/Pagination.tsx'
 import { CATEGORIES, SORT_OPTIONS } from '../constants/catalog.ts'
 import { AUTHOR_SORT_LIMIT, PAGE_SIZE } from '../api/openLibrary.ts'
 import skeletonStyles from '../styles/skeleton.module.css'
+import { findActiveLoan, getBookAvailability } from '../utils/availability.ts'
 import { parsePage } from '../utils/url.ts'
 import styles from './Home.module.css'
 
@@ -35,6 +38,10 @@ function Home() {
   const pageableTotal = isAuthorSort ? Math.min(total, AUTHOR_SORT_LIMIT) : total
   const totalPages = Math.ceil(pageableTotal / PAGE_SIZE)
   const hasFilters = searchText !== '' || category !== null
+
+  // Disponibilidad de los libros de la página: una sola consulta para todos
+  const { loans } = useLibrary()
+  const { byWorkId } = useAvailability(books.map((book) => book.id))
 
   function updateParam(name: string, value: string) {
     setSearchParams(
@@ -119,7 +126,14 @@ function Home() {
               <ul className={styles.grid} role="list">
                 {books.map((book) => (
                   <li key={book.id}>
-                    <BookCard book={book} />
+                    <BookCard
+                      book={book}
+                      availability={
+                        byWorkId
+                          ? getBookAvailability(byWorkId.get(book.id), findActiveLoan(loans, book.id))
+                          : undefined
+                      }
+                    />
                   </li>
                 ))}
               </ul>

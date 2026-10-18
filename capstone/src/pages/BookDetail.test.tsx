@@ -35,7 +35,8 @@ describe('Detalle del libro (integración)', () => {
 
     // Al cambiar de página el foco va al <main> (el h1 aún no existe mientras carga)
     expect(screen.getByRole('main')).toHaveFocus()
-    expect(screen.getByRole('status')).toHaveTextContent('Cargando libro...')
+    // La página se descarga con React.lazy y luego muestra su propio estado de carga
+    expect(await screen.findByText('Cargando libro...')).toBeInTheDocument()
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Ficciones' })).toBeInTheDocument()
     expect(screen.getByText('Jorge Luis Borges')).toBeInTheDocument()
@@ -44,9 +45,12 @@ describe('Detalle del libro (integración)', () => {
     expect(subjects.map((item) => item.textContent)).toEqual(['Cuentos', 'Literatura argentina'])
     expect(screen.getByRole('img', { name: 'Portada de Ficciones' })).toHaveAttribute(
       'src',
-      'https://covers.test/b/id/123-L.jpg',
+      'https://covers.test/b/id/123-L.jpg?default=false',
     )
     expect(document.title).toBe('Ficciones · Biblioteca Universitaria')
+    // Disponibilidad (requisito 1): sin sesión se ve el estado y se invita a iniciar sesión
+    expect(await screen.findByText('Disponible para préstamo.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Inicia sesión' })).toBeInTheDocument()
 
     // "Volver" regresa al catálogo y el foco queda en su h1
     await user.click(screen.getByRole('button', { name: 'Volver' }))
@@ -57,7 +61,7 @@ describe('Detalle del libro (integración)', () => {
     server.use(http.get(`${OPEN_LIBRARY_URL}/works/OL404W.json`, () => new HttpResponse(null, { status: 404 })))
     renderApp('/libro/OL404W')
 
-    expect(screen.getByRole('link', { name: 'Ir al catálogo' })).toHaveAttribute('href', '/')
+    expect(await screen.findByRole('link', { name: 'Ir al catálogo' })).toHaveAttribute('href', '/')
     expect(await screen.findByRole('heading', { level: 1, name: 'Libro no encontrado' })).toBeInTheDocument()
     expect(document.title).toBe('Libro no encontrado · Biblioteca Universitaria')
   })

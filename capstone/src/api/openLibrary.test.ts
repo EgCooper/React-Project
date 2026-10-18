@@ -109,6 +109,17 @@ describe('searchBooks', () => {
     ])
   })
 
+  it('al ordenar por autor guarda el bloque: cambiar de página no vuelve a pedirlo', async () => {
+    const books = Array.from({ length: 20 }, (_, index) => ({ id: `OL${index + 1}W`, title: `Libro ${index + 1}` }))
+    const requests = captureSearch(() => searchResponse(books))
+
+    await searchBooks({ query: 'cache', page: 1, subject: null, sort: 'author' })
+    const page2 = await searchBooks({ query: 'cache', page: 2, subject: null, sort: 'author' })
+
+    expect(requests).toHaveLength(1)
+    expect(page2.books).toHaveLength(6)
+  })
+
   it('lanza un error si Open Library responde con error', async () => {
     captureSearch(() => new HttpResponse(null, { status: 500 }))
 
@@ -181,8 +192,9 @@ describe('getBookDetail', () => {
 })
 
 describe('getCoverUrl', () => {
-  it('arma la URL de la portada con el tamaño pedido', () => {
-    expect(getCoverUrl(123)).toBe('https://covers.test/b/id/123-M.jpg')
-    expect(getCoverUrl(123, 'L')).toBe('https://covers.test/b/id/123-L.jpg')
+  it('arma la URL de la portada con el tamaño pedido y sin imagen de reemplazo', () => {
+    // ?default=false: si no existe, Open Library responde 404 y BookCover muestra "Sin portada"
+    expect(getCoverUrl(123)).toBe('https://covers.test/b/id/123-M.jpg?default=false')
+    expect(getCoverUrl(123, 'L')).toBe('https://covers.test/b/id/123-L.jpg?default=false')
   })
 })

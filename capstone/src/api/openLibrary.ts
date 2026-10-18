@@ -23,6 +23,11 @@ export const AUTHOR_SORT_LIMIT = 200
 
 const authorCollator = new Intl.Collator('es', { sensitivity: 'base' })
 
+// Bloques ya ordenados por autor, por búsqueda + categoría: al cambiar de página no se vuelven a pedir.
+// Se guardan como máximo AUTHOR_CACHE_SIZE búsquedas (se descarta la más antigua)
+const AUTHOR_CACHE_SIZE = 10
+const authorSortCache = new Map<string, BookSearchResult>()
+
 // Negativo: a va antes; positivo: b va antes; 0: iguales. Los libros sin autor van al final
 function compareByAuthor(a: BookSummary, b: BookSummary): number {
   if (a.authors.length === 0 && b.authors.length === 0) return 0
@@ -96,6 +101,12 @@ export async function searchBooks(
   const isDateSort = sort === 'newest' || sort === 'oldest'
   const sortParam = SORT_PARAMS[sort]
   const isAuthorSort = sort === 'author'
+  const authorCacheKey = JSON.stringify([query, subject])
+  const cachedAuthorBlock = isAuthorSort ? authorSortCache.get(authorCacheKey) : undefined
+
+  if (cachedAuthorBlock) {
+    return sliceAuthorPage(cachedAuthorBlock, page)
+  }
 
   const params = new URLSearchParams({
     q: isDateSort ? `${query} ${VALID_YEARS}` : query,
@@ -123,11 +134,13 @@ export async function searchBooks(
   const books = data.docs.map(toBookSummary)
 
   if (isAuthorSort) {
-    const start = (page - 1) * PAGE_SIZE
-    return {
-      books: books.toSorted(compareByAuthor).slice(start, start + PAGE_SIZE),
-      total: data.numFound,
+    const block = { books: books.toSorted(compareByAuthor), total: data.numFound }
+    authorSortCache.set(authorCacheKey, block)
+    if (authorSortCache.size > AUTHOR_CACHE_SIZE) {
+      // Un Map recuerda el orden de inserción: la primera clave es la más antigua
+      authorSortCache.delete(authorSortCache.keys().next().value!)
     }
+    return sliceAuthorPage(block, page)
   }
 
   return {
@@ -136,8 +149,15 @@ export async function searchBooks(
   }
 }
 
+// ?default=false: si la portada no existe responde 404 (y <img> dispara onError) en lugar de una imagen en blanco
+// Página pedida dentro del bloque ya ordenado por autor
+function sliceAuthorPage(block: BookSearchResult, page: number): BookSearchResult {
+  const start = (page - 1) * PAGE_SIZE
+  return { books: block.books.slice(start, start + PAGE_SIZE), total: block.total }
+}
+
 export function getCoverUrl(coverId: number, size: 'S' | 'M' | 'L' = 'M'): string {
-  return `${COVERS_URL}/b/id/${coverId}-${size}.jpg`
+  return `${COVERS_URL}/b/id/${coverId}-${size}.jpg?default=false`
 }
 
 function toPlainText(text: string): string {

@@ -1,11 +1,14 @@
-import { useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { signOut } from '../api/auth.ts'
 import { useAuth } from '../hooks/useAuth.ts'
+import { useWishlist } from '../hooks/useWishlist.ts'
 import styles from './Layout.module.css'
 
 function Layout() {
   const { user, isLoading } = useAuth()
+  // Aviso del menú: cuántos libros de la lista de deseos se pueden pedir ahora
+  const { availableCount } = useWishlist()
   const { pathname } = useLocation()
   const mainRef = useRef<HTMLElement>(null)
   const previousPathname = useRef(pathname)
@@ -19,7 +22,10 @@ function Layout() {
     }
     previousPathname.current = pathname
 
-    const heading = mainRef.current?.querySelector('h1')
+    // Con React.lazy, mientras se descarga la página nueva React deja la anterior oculta (display: none).
+    // Ese h1 viejo no puede recibir el foco: se busca un h1 visible y, si aún no hay, se enfoca el main
+    const headings = Array.from(mainRef.current?.querySelectorAll('h1') ?? [])
+    const heading = headings.find((h1) => !h1.closest('[style*="display: none"]'))
     if (heading) {
       // tabindex="-1": el h1 puede recibir el foco por código sin entrar en el recorrido con Tab
       heading.setAttribute('tabindex', '-1')
@@ -59,6 +65,25 @@ function Layout() {
                   Mis préstamos
                 </NavLink>
               </li>
+              <li>
+                <NavLink to="/mis-libros" className={styles.navLink}>
+                  Mis libros
+                  {availableCount > 0 && (
+                    <>
+                      {/* El número es visual; el lector de pantalla escucha la frase completa */}
+                      <span className={styles.badge} aria-hidden="true">
+                        {availableCount}
+                      </span>
+                      <span className={styles.visuallyHidden}>
+                        {/* Empieza con coma: los espacios iniciales se pierden al calcular el nombre del enlace */}
+                        {availableCount === 1
+                          ? ', 1 libro de tu lista disponible'
+                          : `, ${availableCount} libros de tu lista disponibles`}
+                      </span>
+                    </>
+                  )}
+                </NavLink>
+              </li>
             </ul>
           </nav>
 
@@ -88,7 +113,10 @@ function Layout() {
 
       {/* tabIndex={-1}: puede recibir el foco desde "Saltar al contenido" sin entrar en el recorrido con Tab */}
       <main id="contenido" ref={mainRef} className={`${styles.container} ${styles.main}`} tabIndex={-1}>
-        <Outlet />
+        {/* Mientras se descarga una página con carga perezosa (React.lazy) se muestra este aviso */}
+        <Suspense fallback={<p className={styles.pageLoading}>Cargando página...</p>}>
+          <Outlet />
+        </Suspense>
       </main>
 
       <footer className={styles.footer}>

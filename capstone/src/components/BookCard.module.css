@@ -101,6 +101,40 @@
   line-clamp: 2;
 }
 
-.year {
+/* margin-top: auto: año y disponibilidad quedan abajo en todas las tarjetas */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-2);
   margin-top: auto;
+}
+
+/* Disponibilidad: el texto dice el estado y el punto de color solo lo refuerza (no se depende del color) */
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.availability::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+}
+
+.availability[data-kind='available']::before,
+.availability[data-kind='my-turn']::before {
+  background: var(--color-success);
+}
+
+.availability[data-kind='mine']::before {
+  background: var(--color-primary);
 }

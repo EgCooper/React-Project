@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
-import { getCoverUrl } from '../api/openLibrary.ts'
+import BookCover from '../components/BookCover.tsx'
+import BookLibraryPanel from '../components/BookLibraryPanel.tsx'
 import ErrorMessage from '../components/ErrorMessage.tsx'
 import PageTitle from '../components/PageTitle.tsx'
 import { useBookDetail } from '../hooks/useBookDetail.ts'
@@ -68,23 +69,23 @@ function BookDetail() {
 
       {state.status === 'success' && (
         <article className={styles.detail}>
-          {state.book.coverId !== null ? (
-            <img
-              className={styles.cover}
-              src={getCoverUrl(state.book.coverId, 'L')}
-              alt={`Portada de ${state.book.title}`}
-            />
-          ) : (
-            <div className={`${styles.cover} ${styles.coverEmpty}`} aria-hidden="true">
-              Sin portada
-            </div>
-          )}
+          <BookCover
+            coverId={state.book.coverId}
+            size="L"
+            alt={`Portada de ${state.book.title}`}
+            className={styles.cover}
+            emptyClassName={styles.coverEmpty}
+          />
 
           <div className={styles.info}>
             <h1 className={styles.title}>{state.book.title}</h1>
             <p className={styles.authors}>
               {state.book.authors.length > 0 ? state.book.authors.join(', ') : 'Autor desconocido'}
             </p>
+
+            <BookLibraryPanel
+              book={{ id: state.book.id, title: state.book.title, coverId: state.book.coverId }}
+            />
 
             {state.book.subjects.length > 0 && (
               <ul className={styles.subjects} role="list" aria-label="Géneros">

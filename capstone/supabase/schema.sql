@@ -92,11 +92,13 @@ create policy "Quitar de mi estado de lectura" on public.reading_status
 -- set search_path = '': obliga a escribir public.tabla / auth.uid() completos, para que nadie pueda
 --   "colar" una tabla o función con el mismo nombre en otro esquema.
 -- raise exception '...': los mensajes de reglas de negocio llevan el código P0001 y la app los muestra tal cual.
+-- create or replace: esta sección se puede volver a ejecutar completa para actualizar las funciones
+--   (las tablas de arriba no: ya existen).
 
 -- ---------- Disponibilidad de los libros de una página (también sin sesión) ----------
 -- Devuelve solo los libros prestados o con fila de espera; los que no aparecen están disponibles.
 -- No revela quién tiene el libro ni quién está en la fila.
-create function public.get_availability(work_ids text[])
+create or replace function public.get_availability(work_ids text[])
 returns table (work_id text, due_at timestamptz, queue_length integer, my_queue_position integer)
 language sql
 stable
@@ -108,10 +110,12 @@ as $$
     l.due_at,
     (select count(*)::integer from public.reservations r
       where r.work_id = w.work_id and r.status = 'active') as queue_length,
-    -- Posición del usuario actual en la fila (null si no reservó)
-    (select count(*)::integer from public.reservations r
-      where r.work_id = w.work_id and r.status = 'active'
-        and r.created_at <= mine.created_at) as my_queue_position
+    -- Posición del usuario actual en la fila; null si no reservó (sin el case, contaría 0)
+    case when mine.id is not null then
+      (select count(*)::integer from public.reservations r
+        where r.work_id = w.work_id and r.status = 'active'
+          and r.created_at <= mine.created_at)
+    end as my_queue_position
   -- [1:100]: como máximo 100 libros por consulta
   from unnest(work_ids[1:100]) as w(work_id)
   left join public.loans l on l.work_id = w.work_id and l.returned_at is null
@@ -122,7 +126,7 @@ as $$
 $$;
 
 -- ---------- Pedir un libro prestado ----------
-create function public.borrow_book(p_work_id text, p_title text, p_cover_id integer default null)
+create or replace function public.borrow_book(p_work_id text, p_title text, p_cover_id integer default null)
 returns public.loans
 language plpgsql
 security definer
@@ -187,7 +191,7 @@ end;
 $$;
 
 -- ---------- Devolver un libro ----------
-create function public.return_book(p_loan_id bigint)
+create or replace function public.return_book(p_loan_id bigint)
 returns public.loans
 language plpgsql
 security definer
@@ -211,7 +215,7 @@ $$;
 
 
 -- ---------- Reservar un libro (entrar a la fila) ----------
-create function public.reserve_book(p_work_id text, p_title text, p_cover_id integer default null)
+create or replace function public.reserve_book(p_work_id text, p_title text, p_cover_id integer default null)
 returns public.reservations
 language plpgsql
 security definer
@@ -249,7 +253,7 @@ end;
 $$;
 
 -- ---------- Cancelar una reserva ----------
-create function public.cancel_reservation(p_reservation_id bigint)
+create or replace function public.cancel_reservation(p_reservation_id bigint)
 returns public.reservations
 language plpgsql
 security definer

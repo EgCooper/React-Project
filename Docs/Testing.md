@@ -92,11 +92,11 @@ it('si Open Library falla muestra la alerta y "Reintentar" vuelve a cargar', asy
 
 ### Pruebas unitarias (68)
 
-![Ejecucion de las pruebas unitarias con Vitest: 8 archivos, 68 pruebas en verde](TestsUnitarios.png)
+![Ejecucion de las pruebas unitarias con Vitest: 8 archivos, 68 pruebas en verde](Maquetas/TestsUnitarios.png)
 
 ### Pruebas de integracion (22)
 
-![Ejecucion de las pruebas de integracion con Vitest, Testing Library y MSW: 6 archivos, 22 pruebas en verde](TestsIntegracion.png)
+![Ejecucion de las pruebas de integracion con Vitest, Testing Library y MSW: 6 archivos, 22 pruebas en verde](Maquetas/TestsIntegracion.png)
 
 ### Accesibilidad
 

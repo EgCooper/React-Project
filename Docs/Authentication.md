@@ -75,4 +75,13 @@ Pruebas de este flujo: `src/pages/Login.test.tsx` y `src/api/auth.test.ts` (ver 
 
 ## Capturas
 
+### Inicio de sesion (`/iniciar-sesion`)
+
+![Formulario de inicio de sesion: tarjeta centrada con correo, contrasena, boton "Iniciar sesion" y enlace "Crea una"](Maquetas/Login.png)
+
+### Registro (`/registro`)
+
+![Formulario de registro: correo, contrasena con la pista de requisitos, confirmacion de contrasena, boton "Crear cuenta" y enlace "Inicia sesion"](Maquetas/Register.png)
+
+La pista de la contrasena ("Minimo 8 caracteres, con una mayuscula, una minuscula y un numero") esta conectada al campo con `aria-describedby`, asi el lector de pantalla la lee al entrar en el campo.
 

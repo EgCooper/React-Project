@@ -3,7 +3,7 @@
 SPA en React + TypeScript (Vite) para explorar el catalogo de Open Library, pedir libros prestados, reservarlos y llevar una lista de lectura. La autenticacion y los datos de cada usuario viven en Supabase.
 
 - **Produccion:** https://react-project-nu-three-53.vercel.app/
-- **Documentacion completa:** [../Docs/readme.md](../Docs/readme.md) (requisitos, decisiones, arquitectura, pruebas y despliegue)
+- **Presentacion del proyecto:** [../README.md](../README.md) · **Documentacion:** [../Docs/](../Docs/) (arquitectura, autenticacion, pruebas y despliegue)
 
 ## Empezar
 

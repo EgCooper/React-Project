@@ -60,7 +60,7 @@ cp .env.example .env   # completar con los datos de Supabase y Open Library
 npm run dev
 ```
 
-Más detalles en [capstone/README.md](capstone/README.md).
+La base de datos se crea ejecutando [`capstone/supabase/schema.sql`](capstone/supabase/schema.sql) en el SQL Editor de Supabase.
 
 ## Documentación
 

@@ -101,3 +101,28 @@ it('si Open Library falla muestra la alerta y "Reintentar" vuelve a cargar', asy
 ### Accesibilidad
 
 Ademas de las pruebas, se reviso cada pagina con **axe-core** (el motor de accesibilidad de Lighthouse) en Firefox: catalogo, detalle (con y sin sesion), "Mis prestamos" y "Mis libros" dieron **0 problemas**.
+
+### Lighthouse (produccion)
+
+Informe de Lighthouse en Chrome sobre https://react-project-nu-three-53.vercel.app/ (catalogo, modo escritorio):
+
+| Categoria | Puntaje |
+|---|---|
+| Performance | **97** |
+| Accessibility | **100** |
+| Best Practices | **100** |
+| SEO | **92** |
+
+| Metrica | Valor | Que mide |
+|---|---|---|
+| First Contentful Paint | 0.4 s | Cuando aparece el primer contenido |
+| Largest Contentful Paint | 1.2 s | Cuando aparece el elemento mas grande (las portadas) |
+| Total Blocking Time | 0 ms | Tiempo en que la pagina no responde a clics |
+| Cumulative Layout Shift | 0.004 | Cuanto "salta" la pagina al cargar (las tarjetas de relleno lo evitan) |
+| Speed Index | 0.9 s | Que tan rapido se completa lo visible |
+
+![Informe de Lighthouse: Performance 97, Accessibility 100, Best Practices 100 y SEO 92, con las metricas de carga](Maquetas/LightHouseReport.png)
+
+**JavaScript descargado: 145.3 KiB** (comprimido) en 3 archivos. Las demas paginas (detalle, "Mis prestamos", "Mis libros", login...) no estan aqui: se descargan solo cuando se visitan, gracias a `React.lazy`.
+
+![Treemap de Lighthouse: 145.3 KiB de JavaScript repartidos en tres archivos](Maquetas/LightHouse.png)

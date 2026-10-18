@@ -16,9 +16,12 @@
 
 ```json
 {
+  "buildCommand": "npm run test:run && npm run build",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
 ```
+
+`buildCommand` corre las pruebas antes de construir: si alguna falla, Vercel no publica la nueva version.
 
 En Vercel cada URL busca un archivo. Rutas de React Router como `/libro/OL82563W` no existen como archivo, asi que al recargar la pagina darian 404. La regla dice: _si no hay un archivo con ese nombre, entrega `index.html`_; React Router lee la URL y muestra la pagina correcta. Los archivos reales (`/assets/index-xxx.js`, `/favicon.svg`) se siguen sirviendo normal, porque Vercel revisa primero si el archivo existe.
 
@@ -109,7 +112,7 @@ Los tres deben mostrar el mismo hash en `main`.
 | Campo | Valor | Por que |
 |---|---|---|
 | **Root Directory** | `capstone` | El repositorio tiene `Docs/` y `capstone/`; la app esta en `capstone/` |
-| **Framework Preset** | Vite (se detecta solo) | Build: `npm run build`, salida: `dist` |
+| **Framework Preset** | Vite (se detecta solo) | Salida: `dist`. El comando de build lo define `vercel.json`: `npm run test:run && npm run build` (si una prueba falla, no se despliega) |
 | **Environment Variables** | Las 4 de `.env.example` con sus valores | Ver la seccion de variables de entorno |
 
 4. **Deploy**.

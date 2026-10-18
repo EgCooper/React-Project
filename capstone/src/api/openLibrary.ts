@@ -41,9 +41,17 @@ const WORK_ID = /^OL\d+W$/
 const MAX_AUTHORS = 5
 const MAX_SUBJECTS = 10
 
-// [texto](url) -> texto, y \[ -> [ (Markdown que traen algunas descripciones)
+// Markdown que traen algunas descripciones de Open Library:
+// [texto](url) -> texto
 const MARKDOWN_LINK = /\[((?:\\.|[^\\\]])*)\]\([^)]*\)/g
+// *texto*, **texto** o _texto_ -> texto. No toca 2*3*4, nombres_con_guion ni \*escapados\*
+const MARKDOWN_EMPHASIS = /(?<![\\\w*])(\*{1,2}|_)(?=\S)([^*_\n]+?)(?<=\S)\1(?![\w*])/g
+// Líneas separadoras: ---, *** o ___ (3 o más)
+const MARKDOWN_RULE = /^[ \t]*([-*_])(?:[ \t]*\1){2,}[ \t]*$/gm
+// \[ -> [ (caracteres escapados)
 const MARKDOWN_ESCAPE = /\\([\\[\]()*_])/g
+// 3 o más saltos de línea seguidos -> uno en blanco entre párrafos
+const EXTRA_BLANK_LINES = /\n{3,}/g
 
 interface SearchDoc {
   key: string
@@ -161,7 +169,18 @@ export function getCoverUrl(coverId: number, size: 'S' | 'M' | 'L' = 'M'): strin
 }
 
 function toPlainText(text: string): string {
-  return text.replace(MARKDOWN_LINK, '$1').replace(MARKDOWN_ESCAPE, '$1').trim()
+  return (
+    text
+      // Saltos de línea de Windows (\r\n) -> \n
+      .replace(/\r\n?/g, '\n')
+      .replace(MARKDOWN_RULE, '')
+      .replace(MARKDOWN_LINK, '$1')
+      // Antes de quitar los escapes: así \*esto\* no se confunde con énfasis
+      .replace(MARKDOWN_EMPHASIS, '$2')
+      .replace(MARKDOWN_ESCAPE, '$1')
+      .replace(EXTRA_BLANK_LINES, '\n\n')
+      .trim()
+  )
 }
 
 // null = la obra no existe (404); un error de red o del servidor lanza una excepcion

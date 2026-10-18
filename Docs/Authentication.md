@@ -72,3 +72,7 @@ sequenceDiagram
 - **Errores:** se traducen por codigo (`invalid_credentials`, `weak_password`...), no por el texto en ingles, y nunca se muestra el error tecnico al usuario.
 
 Pruebas de este flujo: `src/pages/Login.test.tsx` y `src/api/auth.test.ts` (ver [Testing.md](Testing.md)).
+
+## Capturas
+
+

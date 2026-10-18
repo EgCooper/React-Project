@@ -151,7 +151,7 @@ Nota sobre React Router: el enunciado menciona "React Router DOM". Desde la vers
 - [x] **UI y responsive:** paleta y modo oscuro, layout responsive, componentes, estados de carga/vacio/error, accesibilidad (foco al cambiar de pagina, titulo por pagina) y verificacion con axe-core.
 - [x] **Fase 4 - Prestamos:** `LibraryContext` (Context + useReducer), disponibilidad, prestar/devolver con vencimiento, reservas con fila de espera, historial, estado de lectura y lista de deseos con aviso de disponibilidad.
 - [x] **Rendimiento:** `React.lazy` en las paginas, estado de carga derivado en `useBooks`, cache del bloque de orden por autor, portadas que fallan, disponibilidad en una sola consulta por pagina.
-- [x] **Pruebas:** 89 pruebas unitarias y de integracion ([Testing.md](Testing.md)).
+- [x] **Pruebas:** 90 pruebas unitarias y de integracion ([Testing.md](Testing.md)).
 - [x] **Documentacion:** arquitectura, modelo de datos y maquetas ([Architecture.md](Architecture.md)).
 - [x] **Despliegue** en Vercel ([DeploymentSetting.md](DeploymentSetting.md)).
 

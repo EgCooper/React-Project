@@ -1,6 +1,6 @@
 # Pruebas unitarias y de integracion
 
-**Resultado:** 89 pruebas en verde: 67 unitarias y 22 de integracion (semana 6 del enunciado).
+**Resultado:** 90 pruebas en verde: 68 unitarias y 22 de integracion (semana 6 del enunciado).
 
 ---
 
@@ -45,7 +45,7 @@ npm run test:run   # una sola vez (lo que corre Vercel)
 | [`src/utils/validation.test.ts`](../capstone/src/utils/validation.test.ts) | Unitaria | Correo, contrasena (8 caracteres, minuscula, mayuscula, numero), registro y login | 12 |
 | [`src/utils/url.test.ts`](../capstone/src/utils/url.test.ts) | Unitaria | `parsePage` (`?pagina=` invalido vuelve a 1) y `getRedirectPath` (evita redirigir a otra web tras el login) | 13 |
 | [`src/api/auth.test.ts`](../capstone/src/api/auth.test.ts) | Unitaria | Traduccion de los errores de Supabase al espanol | 6 |
-| [`src/api/openLibrary.test.ts`](../capstone/src/api/openLibrary.test.ts) | Unitaria (red simulada) | Parametros de busqueda, categoria, orden por fecha y por autor (y su cache), errores; detalle: Markdown, temas repetidos, redirecciones, 404 | 13 |
+| [`src/api/openLibrary.test.ts`](../capstone/src/api/openLibrary.test.ts) | Unitaria (red simulada) | Parametros de busqueda, categoria, orden por fecha y por autor (y su cache), errores; detalle: limpieza de Markdown (enlaces, enfasis, separadores), temas repetidos, redirecciones, 404 | 14 |
 | [`src/api/library.test.ts`](../capstone/src/api/library.test.ts) | Unitaria (red simulada) | Llamadas a Supabase: parametros de las funciones SQL, upsert del estado de lectura, conversion a camelCase y que solo los errores `P0001` lleguen al usuario | 7 |
 | [`src/context/libraryReducer.test.ts`](../capstone/src/context/libraryReducer.test.ts) | Unitaria | Reducer de `LibraryContext`: cargar, prestar (cumple la reserva), devolver, reservar, cancelar y estado de lectura | 6 |
 | [`src/utils/availability.test.ts`](../capstone/src/utils/availability.test.ts) | Unitaria | Situacion de un libro: disponible, tuyo (y vencido), prestado, tu turno, apartado; etiquetas | 7 |
@@ -90,9 +90,9 @@ it('si Open Library falla muestra la alerta y "Reintentar" vuelve a cargar', asy
 
 ## Evidencias
 
-### Pruebas unitarias (67)
+### Pruebas unitarias (68)
 
-![Ejecucion de las pruebas unitarias con Vitest: 8 archivos, 67 pruebas en verde](TestsUnitarios.png)
+![Ejecucion de las pruebas unitarias con Vitest: 8 archivos, 68 pruebas en verde](TestsUnitarios.png)
 
 ### Pruebas de integracion (22)
 

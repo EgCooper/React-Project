@@ -162,6 +162,28 @@ describe('getBookDetail', () => {
     })
   })
 
+  it('quita el énfasis, las líneas separadoras y los saltos de línea de más', async () => {
+    server.use(
+      http.get(`${OPEN_LIBRARY_URL}/works/OL5W.json`, () =>
+        HttpResponse.json({
+          type: { key: '/type/work' },
+          title: 'Cien años de soledad',
+          // Formato real de Open Library: \r\n, *cursiva*, **negrita**, _cursiva_ y una línea ----------
+          description:
+            '*Cien años de soledad* es una **novela** de _García Márquez_.\r\n\r\n\r\n----------\r\n\r\n\r\n' +
+            'Versión en inglés. 2*3*4, archivo_final y un \\*asterisco\\* escapado.',
+        }),
+      ),
+    )
+
+    const book = await getBookDetail('OL5W')
+
+    expect(book?.description).toBe(
+      'Cien años de soledad es una novela de García Márquez.\n\n' +
+        'Versión en inglés. 2*3*4, archivo_final y un *asterisco* escapado.',
+    )
+  })
+
   it('sigue la redirección de una obra fusionada', async () => {
     server.use(
       http.get(`${OPEN_LIBRARY_URL}/works/OL1W.json`, () =>

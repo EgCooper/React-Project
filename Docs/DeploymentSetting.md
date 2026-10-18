@@ -6,7 +6,7 @@
 
 ## URL Publica en vivo de la aplicacion
 
-![alt text](UI.png)
+![Catalogo de la Biblioteca Universitaria en produccion: buscador, filtros y libros con su disponibilidad](UI.png)
 
 ## Instrucciones
 

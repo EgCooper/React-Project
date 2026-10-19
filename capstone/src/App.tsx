@@ -1,17 +1,17 @@
 import { lazy } from 'react'
 import { Route, Routes } from 'react-router'
-import Layout from './components/Layout.tsx'
-import ProtectedRoute from './components/ProtectedRoute.tsx'
-import Home from './pages/Home.tsx'
+import Layout from './components/Layout/Layout.tsx'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx'
+import Home from './pages/Home/Home.tsx'
 
 // Carga perezosa: cada página se descarga recién la primera vez que se visita.
 // El catálogo no, porque es la portada y se necesita de inmediato
-const BookDetail = lazy(() => import('./pages/BookDetail.tsx'))
-const MyLoans = lazy(() => import('./pages/MyLoans.tsx'))
-const MyBooks = lazy(() => import('./pages/MyBooks.tsx'))
-const Login = lazy(() => import('./pages/Login.tsx'))
-const Register = lazy(() => import('./pages/Register.tsx'))
-const NotFound = lazy(() => import('./pages/NotFound.tsx'))
+const BookDetail = lazy(() => import('./pages/BookDetail/BookDetail.tsx'))
+const MyLoans = lazy(() => import('./pages/MyLoans/MyLoans.tsx'))
+const MyBooks = lazy(() => import('./pages/MyBooks/MyBooks.tsx'))
+const Login = lazy(() => import('./pages/Login/Login.tsx'))
+const Register = lazy(() => import('./pages/Register/Register.tsx'))
+const NotFound = lazy(() => import('./pages/NotFound/NotFound.tsx'))
 
 function App() {
   return (

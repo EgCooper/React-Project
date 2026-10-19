@@ -25,15 +25,31 @@ npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing
 | Archivo | Configuracion |
 |---|---|
 | `capstone/vite.config.ts` | Bloque `test`: entorno `jsdom`, archivo de setup y URLs falsas (`https://openlibrary.test`, `https://supabase.test`) |
-| `capstone/src/test/setup.ts` | Activa jest-dom, enciende MSW (`onUnhandledRequest: 'error'`: una peticion no simulada hace fallar la prueba) y limpia despues de cada prueba |
-| `capstone/src/test/server.ts` | Servidor de MSW; cada prueba define sus respuestas con `server.use(...)` |
-| `capstone/src/test/handlers.ts` | Respuestas por defecto de Supabase: sin prestamos, sin reservas y todos los libros disponibles |
-| `capstone/package.json` | Scripts `test` (modo vigilancia) y `test:run` (una sola vez) |
+| `capstone/tsconfig.app.json` | `"include": ["src", "tests"]`: TypeScript tambien revisa los tipos de las pruebas |
+| `capstone/tests/support/setup.ts` | Activa jest-dom, enciende MSW (`onUnhandledRequest: 'error'`: una peticion no simulada hace fallar la prueba) y limpia despues de cada prueba |
+| `capstone/tests/support/server.ts` | Servidor de MSW; cada prueba define sus respuestas con `server.use(...)` |
+| `capstone/tests/support/handlers.ts` | Respuestas por defecto de Supabase: sin prestamos, sin reservas y todos los libros disponibles |
+| `capstone/package.json` | Scripts `test` (modo vigilancia), `test:run` (todas, una vez), `test:unit` y `test:integration` |
 | `capstone/vercel.json` | `"buildCommand": "npm run test:run && npm run build"`: si una prueba falla, Vercel no despliega |
 
 ```bash
-npm test           # vigila los archivos y repite las pruebas al guardar (salir con q)
-npm run test:run   # una sola vez (lo que corre Vercel)
+npm test                  # vigila los archivos y repite las pruebas al guardar (salir con q)
+npm run test:run          # todas, una sola vez (lo que corre Vercel)
+npm run test:unit         # solo las unitarias
+npm run test:integration  # solo las de integracion
+```
+
+## Organizacion
+
+Las pruebas viven fuera de `src/`, separadas por tipo; `src/` queda solo con el codigo de la app.
+
+```
+capstone/
+├── src/                 codigo de la aplicacion
+└── tests/
+    ├── unit/            8 archivos: funciones solas (68 pruebas)
+    ├── integration/     6 archivos: la app completa, como la usaria una persona (22 pruebas)
+    └── support/         configuracion, servidor de MSW y datos simulados
 ```
 
 ---
@@ -42,31 +58,31 @@ npm run test:run   # una sola vez (lo que corre Vercel)
 
 | Archivo | Tipo | Que prueba | Pruebas |
 |---|---|---|---|
-| [`src/utils/validation.test.ts`](../capstone/src/utils/validation.test.ts) | Unitaria | Correo, contrasena (8 caracteres, minuscula, mayuscula, numero), registro y login | 12 |
-| [`src/utils/url.test.ts`](../capstone/src/utils/url.test.ts) | Unitaria | `parsePage` (`?pagina=` invalido vuelve a 1) y `getRedirectPath` (evita redirigir a otra web tras el login) | 13 |
-| [`src/api/auth.test.ts`](../capstone/src/api/auth.test.ts) | Unitaria | Traduccion de los errores de Supabase al espanol | 6 |
-| [`src/api/openLibrary.test.ts`](../capstone/src/api/openLibrary.test.ts) | Unitaria (red simulada) | Parametros de busqueda, categoria, orden por fecha y por autor (y su cache), errores; detalle: limpieza de Markdown (enlaces, enfasis, separadores), temas repetidos, redirecciones, 404 | 14 |
-| [`src/api/library.test.ts`](../capstone/src/api/library.test.ts) | Unitaria (red simulada) | Llamadas a Supabase: parametros de las funciones SQL, upsert del estado de lectura, conversion a camelCase y que solo los errores `P0001` lleguen al usuario | 7 |
-| [`src/context/libraryReducer.test.ts`](../capstone/src/context/libraryReducer.test.ts) | Unitaria | Reducer de `LibraryContext`: cargar, prestar (cumple la reserva), devolver, reservar, cancelar y estado de lectura | 6 |
-| [`src/utils/availability.test.ts`](../capstone/src/utils/availability.test.ts) | Unitaria | Situacion de un libro: disponible, tuyo (y vencido), prestado, tu turno, apartado; etiquetas | 7 |
-| [`src/utils/date.test.ts`](../capstone/src/utils/date.test.ts) | Unitaria | Formato de fechas en espanol y vencimiento | 3 |
-| [`src/pages/Home.test.tsx`](../capstone/src/pages/Home.test.tsx) | Integracion | Catalogo inicial, busqueda con resultados atenuados mientras carga, disponibilidad en una consulta, categoria, paginacion, estado vacio + "Limpiar", error + "Reintentar" | 7 |
-| [`src/pages/BookDetail.test.tsx`](../capstone/src/pages/BookDetail.test.tsx) | Integracion | Abrir un libro desde el catalogo, foco al cambiar de pagina, "Volver", URL directa y libro inexistente, error + "Reintentar" | 3 |
-| [`src/pages/Login.test.tsx`](../capstone/src/pages/Login.test.tsx) | Integracion | Validacion y foco en el primer campo invalido, credenciales incorrectas, ruta protegida -> login -> vuelve a "Mis prestamos" -> cerrar sesion | 3 |
-| [`src/pages/BookLoans.test.tsx`](../capstone/src/pages/BookLoans.test.tsx) | Integracion | Desde el detalle: pedir prestado y devolver (sin perder el foco), reservar y cancelar, mensaje de una regla que no se cumple, estado de lectura | 4 |
-| [`src/pages/MyLoans.test.tsx`](../capstone/src/pages/MyLoans.test.tsx) | Integracion | Prestamos activos (vencido marcado), reservas con su lugar en la fila, historial; devolver y cancelar | 3 |
-| [`src/pages/MyBooks.test.tsx`](../capstone/src/pages/MyBooks.test.tsx) | Integracion | Aviso "¡Disponible!" de la lista de deseos (tambien en el menu), leyendo y completados; quitar un libro | 2 |
+| [`tests/unit/validation.test.ts`](../capstone/tests/unit/validation.test.ts) | Unitaria | Correo, contrasena (8 caracteres, minuscula, mayuscula, numero), registro y login | 12 |
+| [`tests/unit/url.test.ts`](../capstone/tests/unit/url.test.ts) | Unitaria | `parsePage` (`?pagina=` invalido vuelve a 1) y `getRedirectPath` (evita redirigir a otra web tras el login) | 13 |
+| [`tests/unit/auth.test.ts`](../capstone/tests/unit/auth.test.ts) | Unitaria | Traduccion de los errores de Supabase al espanol | 6 |
+| [`tests/unit/openLibrary.test.ts`](../capstone/tests/unit/openLibrary.test.ts) | Unitaria (red simulada) | Parametros de busqueda, categoria, orden por fecha y por autor (y su cache), errores; detalle: limpieza de Markdown (enlaces, enfasis, separadores), temas repetidos, redirecciones, 404 | 14 |
+| [`tests/unit/library.test.ts`](../capstone/tests/unit/library.test.ts) | Unitaria (red simulada) | Llamadas a Supabase: parametros de las funciones SQL, upsert del estado de lectura, conversion a camelCase y que solo los errores `P0001` lleguen al usuario | 7 |
+| [`tests/unit/libraryReducer.test.ts`](../capstone/tests/unit/libraryReducer.test.ts) | Unitaria | Reducer de `LibraryContext`: cargar, prestar (cumple la reserva), devolver, reservar, cancelar y estado de lectura | 6 |
+| [`tests/unit/availability.test.ts`](../capstone/tests/unit/availability.test.ts) | Unitaria | Situacion de un libro: disponible, tuyo (y vencido), prestado, tu turno, apartado; etiquetas | 7 |
+| [`tests/unit/date.test.ts`](../capstone/tests/unit/date.test.ts) | Unitaria | Formato de fechas en espanol y vencimiento | 3 |
+| [`tests/integration/Home.test.tsx`](../capstone/tests/integration/Home.test.tsx) | Integracion | Catalogo inicial, busqueda con resultados atenuados mientras carga, disponibilidad en una consulta, categoria, paginacion, estado vacio + "Limpiar", error + "Reintentar" | 7 |
+| [`tests/integration/BookDetail.test.tsx`](../capstone/tests/integration/BookDetail.test.tsx) | Integracion | Abrir un libro desde el catalogo, foco al cambiar de pagina, "Volver", URL directa y libro inexistente, error + "Reintentar" | 3 |
+| [`tests/integration/Login.test.tsx`](../capstone/tests/integration/Login.test.tsx) | Integracion | Validacion y foco en el primer campo invalido, credenciales incorrectas, ruta protegida -> login -> vuelve a "Mis prestamos" -> cerrar sesion | 3 |
+| [`tests/integration/BookLoans.test.tsx`](../capstone/tests/integration/BookLoans.test.tsx) | Integracion | Desde el detalle: pedir prestado y devolver (sin perder el foco), reservar y cancelar, mensaje de una regla que no se cumple, estado de lectura | 4 |
+| [`tests/integration/MyLoans.test.tsx`](../capstone/tests/integration/MyLoans.test.tsx) | Integracion | Prestamos activos (vencido marcado), reservas con su lugar en la fila, historial; devolver y cancelar | 3 |
+| [`tests/integration/MyBooks.test.tsx`](../capstone/tests/integration/MyBooks.test.tsx) | Integracion | Aviso "¡Disponible!" de la lista de deseos (tambien en el menu), leyendo y completados; quitar un libro | 2 |
 
 Archivos de apoyo:
 
-- [`src/test/renderApp.tsx`](../capstone/src/test/renderApp.tsx): renderiza la app completa (rutas, Layout, AuthProvider, LibraryProvider) en una ruta dada, con un router en memoria.
-- [`src/test/openLibraryMocks.ts`](../capstone/src/test/openLibraryMocks.ts) y [`src/test/libraryMocks.ts`](../capstone/src/test/libraryMocks.ts): arman respuestas falsas con la misma forma que las de Open Library y Supabase.
-- [`src/test/auth.ts`](../capstone/src/test/auth.ts): `signInTestUser()` inicia sesion antes de renderizar, sin pasar por el formulario.
+- [`tests/support/renderApp.tsx`](../capstone/tests/support/renderApp.tsx): renderiza la app completa (rutas, Layout, AuthProvider, LibraryProvider) en una ruta dada, con un router en memoria.
+- [`tests/support/openLibraryMocks.ts`](../capstone/tests/support/openLibraryMocks.ts) y [`tests/support/libraryMocks.ts`](../capstone/tests/support/libraryMocks.ts): arman respuestas falsas con la misma forma que las de Open Library y Supabase.
+- [`tests/support/auth.ts`](../capstone/tests/support/auth.ts): `signInTestUser()` inicia sesion antes de renderizar, sin pasar por el formulario.
 - `parsePage` y `getRedirectPath` se movieron de `Home.tsx` y `Login.tsx` a [`src/utils/url.ts`](../capstone/src/utils/url.ts) para poder probarlas solas.
 
 **Unitaria vs integracion:** una prueba unitaria revisa una funcion sola (entrada -> salida esperada). Una de integracion monta la app completa y la usa como una persona: escribe en el buscador, hace clic en "Reintentar" y comprueba lo que aparece en pantalla.
 
-Ejemplo de prueba de integracion (`Home.test.tsx`):
+Ejemplo de prueba de integracion (`tests/integration/Home.test.tsx`):
 
 ```tsx
 it('si Open Library falla muestra la alerta y "Reintentar" vuelve a cargar', async () => {

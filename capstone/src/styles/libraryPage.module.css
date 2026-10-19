@@ -1,0 +1,78 @@
+/* Estilos compartidos por "Mis préstamos" y "Mis libros" */
+.intro {
+  margin-block: 0 var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.section {
+  margin-block-end: var(--space-8);
+}
+
+.sectionTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-block: 0 var(--space-3);
+  font-size: var(--font-size-xl);
+}
+
+.count {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+}
+
+.feedback {
+  margin-block: 0 var(--space-4);
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.feedback:empty {
+  display: none;
+}
+
+.loading {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* Listas de libros (cada fila es un LibraryItem) y los datos que van debajo del título */
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Vencido o disponible: en negrita y con color, además del texto que lo explica */
+.alert {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-danger);
+}
+
+.good {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-success);
+}

@@ -12,9 +12,9 @@ La autenticacion usa **Supabase Auth** con **correo + contrasena**. La confirmac
 | `src/api/auth.ts` | `signUp`, `signIn`, `signOut` y `getAuthErrorMessage` (traduce los errores de Supabase por su codigo) |
 | `src/context/AuthProvider.tsx` | Escucha a Supabase y guarda `user` e `isLoading` en un Context |
 | `src/hooks/useAuth.ts` | Lee ese Context desde cualquier componente |
-| `src/components/ProtectedRoute.tsx` | Deja pasar solo con sesion; si no, redirige al login recordando la pagina pedida |
-| `src/pages/Register.tsx` / `Login.tsx` | Formularios con validacion (`src/utils/validation.ts`) |
-| `src/components/Layout.tsx` | Muestra el correo y "Cerrar sesion", o "Iniciar sesion" / "Crear cuenta" |
+| `src/components/ProtectedRoute/ProtectedRoute.tsx` | Deja pasar solo con sesion; si no, redirige al login recordando la pagina pedida |
+| `src/pages/Register/Register.tsx` / `Login/Login.tsx` | Formularios con validacion (`src/utils/validation.ts`) |
+| `src/components/Layout/Layout.tsx` | Muestra el correo y "Cerrar sesion", o "Iniciar sesion" / "Crear cuenta" |
 
 ---
 
@@ -71,7 +71,7 @@ sequenceDiagram
 - **Clave publishable:** es publica por diseno y va en el frontend. La clave `sb_secret_...` nunca va en el codigo.
 - **Errores:** se traducen por codigo (`invalid_credentials`, `weak_password`...), no por el texto en ingles, y nunca se muestra el error tecnico al usuario.
 
-Pruebas de este flujo: `src/pages/Login.test.tsx` y `src/api/auth.test.ts` (ver [Testing.md](Testing.md)).
+Pruebas de este flujo: `tests/integration/Login.test.tsx` y `tests/unit/auth.test.ts` (ver [Testing.md](Testing.md)).
 
 ## Capturas
 

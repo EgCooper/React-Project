@@ -1,0 +1,17 @@
+/* Rastreador de lectura, separado de la disponibilidad por una línea */
+.reading {
+  display: grid;
+  gap: var(--space-1);
+  padding-block-start: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.select {
+  max-width: 16rem;
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}

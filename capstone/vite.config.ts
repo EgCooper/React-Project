@@ -9,7 +9,7 @@ export default defineConfig({
     // jsdom: un navegador simulado en Node (document, window, localStorage...)
     environment: 'jsdom',
     // Se ejecuta antes de cada archivo de pruebas
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: ['./tests/support/setup.ts'],
     // URLs falsas: las pruebas nunca llaman a Open Library ni a Supabase reales (las responde MSW)
     env: {
       VITE_OPEN_LIBRARY_URL: 'https://openlibrary.test',

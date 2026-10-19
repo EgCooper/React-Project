@@ -25,8 +25,9 @@ flowchart LR
 
 | Capa | Archivos | Responsabilidad |
 |---|---|---|
-| Paginas | `src/pages/` | Una por ruta. Todas salvo el catalogo se cargan con `React.lazy` |
-| Componentes | `src/components/` | Piezas de interfaz reutilizables (tarjeta, panel de prestamo, formulario...) |
+| Paginas | `src/pages/` | Una carpeta por ruta, con su `.tsx` y sus estilos. Todas salvo el catalogo se cargan con `React.lazy` |
+| Componentes | `src/components/` | Piezas de interfaz reutilizables (tarjeta, panel de prestamo, formulario...), una carpeta por componente con su `.tsx` y su `.module.css` |
+| Estilos compartidos | `src/styles/` | CSS que usan varias piezas: boton principal, relleno de carga, formularios de acceso y paginas de listas |
 | Hooks | `src/hooks/` | Logica con estado: busqueda paginada, detalle, disponibilidad, lista de deseos |
 | Contextos | `src/context/` | Estado global: sesion (`AuthContext`) y biblioteca del usuario (`LibraryContext` con `useReducer`) |
 | API | `src/api/` | Unico lugar que habla con Open Library y Supabase; convierte las respuestas al formato de la app |

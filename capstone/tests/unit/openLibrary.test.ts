@@ -124,7 +124,7 @@ describe('searchBooks', () => {
     captureSearch(() => new HttpResponse(null, { status: 500 }))
 
     await expect(searchBooks({ query: 'x', page: 1, subject: null, sort: 'relevance' })).rejects.toThrow(
-      'Open Library respondió con estado 500',
+      'Open Library responded with status 500',
     )
   })
 })
@@ -209,7 +209,7 @@ describe('getBookDetail', () => {
   it('lanza un error si Open Library falla (500)', async () => {
     server.use(http.get(`${OPEN_LIBRARY_URL}/works/OL9W.json`, () => new HttpResponse(null, { status: 500 })))
 
-    await expect(getBookDetail('OL9W')).rejects.toThrow('Open Library respondió con estado 500')
+    await expect(getBookDetail('OL9W')).rejects.toThrow('Open Library responded with status 500')
   })
 })
 

@@ -36,34 +36,36 @@ describe('Detalle del libro (integración)', () => {
     // Al cambiar de página el foco va al <main> (el h1 aún no existe mientras carga)
     expect(screen.getByRole('main')).toHaveFocus()
     // La página se descarga con React.lazy y luego muestra su propio estado de carga
-    expect(await screen.findByText('Cargando libro...')).toBeInTheDocument()
+    expect(await screen.findByText('Loading book...')).toBeInTheDocument()
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Ficciones' })).toBeInTheDocument()
     expect(screen.getByText('Jorge Luis Borges')).toBeInTheDocument()
     expect(screen.getByText('Cuentos fantásticos.')).toBeInTheDocument()
-    const subjects = within(screen.getByRole('list', { name: 'Géneros' })).getAllByRole('listitem')
+    const subjects = within(screen.getByRole('list', { name: 'Subjects' })).getAllByRole('listitem')
     expect(subjects.map((item) => item.textContent)).toEqual(['Cuentos', 'Literatura argentina'])
-    expect(screen.getByRole('img', { name: 'Portada de Ficciones' })).toHaveAttribute(
+    expect(screen.getByRole('img', { name: 'Cover of Ficciones' })).toHaveAttribute(
       'src',
       'https://covers.test/b/id/123-L.jpg?default=false',
     )
-    expect(document.title).toBe('Ficciones · Biblioteca Universitaria')
+    expect(document.title).toBe('Ficciones · University Library')
     // Disponibilidad (requisito 1): sin sesión se ve el estado y se invita a iniciar sesión
-    expect(await screen.findByText('Disponible para préstamo.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Inicia sesión' })).toBeInTheDocument()
+    expect(await screen.findByText('Available to borrow.')).toBeInTheDocument()
+    // El header también tiene un enlace "Sign in": se busca el del panel de disponibilidad
+    const panel = screen.getByRole('region', { name: 'Availability' })
+    expect(within(panel).getByRole('link', { name: 'Sign in' })).toBeInTheDocument()
 
     // "Volver" regresa al catálogo y el foco queda en su h1
-    await user.click(screen.getByRole('button', { name: 'Volver' }))
-    await waitFor(() => expect(screen.getByRole('heading', { level: 1, name: 'Catálogo' })).toHaveFocus())
+    await user.click(screen.getByRole('button', { name: 'Back' }))
+    await waitFor(() => expect(screen.getByRole('heading', { level: 1, name: 'Catalog' })).toHaveFocus())
   })
 
   it('abierto por URL directa: ofrece "Ir al catálogo" y avisa si el libro no existe', async () => {
     server.use(http.get(`${OPEN_LIBRARY_URL}/works/OL404W.json`, () => new HttpResponse(null, { status: 404 })))
-    renderApp('/libro/OL404W')
+    renderApp('/book/OL404W')
 
-    expect(await screen.findByRole('link', { name: 'Ir al catálogo' })).toHaveAttribute('href', '/')
-    expect(await screen.findByRole('heading', { level: 1, name: 'Libro no encontrado' })).toBeInTheDocument()
-    expect(document.title).toBe('Libro no encontrado · Biblioteca Universitaria')
+    expect(await screen.findByRole('link', { name: 'Go to catalog' })).toHaveAttribute('href', '/')
+    expect(await screen.findByRole('heading', { level: 1, name: 'Book not found' })).toBeInTheDocument()
+    expect(document.title).toBe('Book not found · University Library')
   })
 
   it('si Open Library falla muestra la alerta y "Reintentar" carga el libro', async () => {
@@ -72,11 +74,11 @@ describe('Detalle del libro (integración)', () => {
       calls += 1
       return calls === 1 ? new HttpResponse(null, { status: 500 }) : HttpResponse.json(WORK)
     })
-    const { user } = renderApp('/libro/OL1W')
+    const { user } = renderApp('/book/OL1W')
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo cargar el libro.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not load the book.')
 
-    await user.click(screen.getByRole('button', { name: 'Reintentar' }))
+    await user.click(screen.getByRole('button', { name: 'Retry' }))
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Ficciones' })).toBeInTheDocument()
   })

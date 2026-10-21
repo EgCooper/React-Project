@@ -3,12 +3,12 @@ import { supabase } from './supabase.ts'
 
 // Supabase responde en ingles; traducimos por codigo de error (estable), no por el texto
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
-  user_already_exists: 'Ya existe una cuenta con ese correo.',
-  email_exists: 'Ya existe una cuenta con ese correo.',
-  weak_password: 'La contraseña no cumple los requisitos de seguridad.',
-  email_address_invalid: 'El correo no es válido.',
-  over_request_rate_limit: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
-  invalid_credentials: 'Correo o contraseña incorrectos.',
+  user_already_exists: 'An account with that email already exists.',
+  email_exists: 'An account with that email already exists.',
+  weak_password: 'The password does not meet the security requirements.',
+  email_address_invalid: 'The email address is not valid.',
+  over_request_rate_limit: 'Too many attempts. Wait a few minutes and try again.',
+  invalid_credentials: 'Incorrect email or password.',
 }
 
 export function getAuthErrorMessage(error: unknown): string {
@@ -16,7 +16,7 @@ export function getAuthErrorMessage(error: unknown): string {
     return AUTH_ERROR_MESSAGES[error.code]
   }
 
-  return 'No se pudo completar la operación. Intenta de nuevo.'
+  return 'Something went wrong. Please try again.'
 }
 
 export async function signUp(email: string, password: string): Promise<void> {

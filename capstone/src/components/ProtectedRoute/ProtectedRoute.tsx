@@ -7,12 +7,12 @@ function ProtectedRoute() {
 
   // Mientras Supabase recupera la sesion no sabemos si hay usuario: no redirigir todavia
   if (isLoading) {
-    return <p role="status">Comprobando sesión...</p>
+    return <p role="status">Checking session...</p>
   }
 
   if (!user) {
     // Recordamos la pagina pedida para volver a ella despues de iniciar sesion
-    return <Navigate to="/iniciar-sesion" replace state={{ from: location.pathname + location.search }} />
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
   }
 
   return <Outlet />

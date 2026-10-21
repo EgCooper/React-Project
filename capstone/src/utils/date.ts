@@ -1,5 +1,5 @@
-// "27 de octubre de 2026", en la zona horaria de quien usa la app
-const DATE_FORMAT = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long', year: 'numeric' })
+// "October 27, 2026", en la zona horaria de quien usa la app
+const DATE_FORMAT = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
 
 export function formatDate(isoDate: string): string {
   return DATE_FORMAT.format(new Date(isoDate))

@@ -12,17 +12,17 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
   }
 
   return (
-    <nav className={styles.pagination} aria-label="Paginación de resultados">
+    <nav className={styles.pagination} aria-label="Results pagination">
       <button
         type="button"
         className={styles.previous}
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
       >
-        <span aria-hidden="true">←</span> Anterior
+        <span aria-hidden="true">←</span> Previous
       </button>
       <span className={styles.status}>
-        Página {page.toLocaleString('es')} de {totalPages.toLocaleString('es')}
+        Page {page.toLocaleString('en')} of {totalPages.toLocaleString('en')}
       </span>
       <button
         type="button"
@@ -30,7 +30,7 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
       >
-        Siguiente <span aria-hidden="true">→</span>
+        Next <span aria-hidden="true">→</span>
       </button>
     </nav>
   )

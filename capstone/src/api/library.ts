@@ -94,7 +94,7 @@ export function getLibraryErrorMessage(error: unknown): string {
     return error.message
   }
 
-  return 'No se pudo completar la operación. Intenta de nuevo.'
+  return 'Something went wrong. Please try again.'
 }
 
 // ---------- Lecturas (RLS: cada usuario solo recibe sus filas) ----------

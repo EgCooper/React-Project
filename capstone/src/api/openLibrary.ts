@@ -21,7 +21,7 @@ const VALID_YEARS = `first_publish_year:[1450 TO ${new Date().getFullYear()}]`
 // Open Library no ordena por autor: pedimos este bloque de resultados y lo ordenamos en el navegador
 export const AUTHOR_SORT_LIMIT = 200
 
-const authorCollator = new Intl.Collator('es', { sensitivity: 'base' })
+const authorCollator = new Intl.Collator('en', { sensitivity: 'base' })
 
 // Bloques ya ordenados por autor, por búsqueda + categoría: al cambiar de página no se vuelven a pedir.
 // Se guardan como máximo AUTHOR_CACHE_SIZE búsquedas (se descarta la más antigua)
@@ -135,7 +135,7 @@ export async function searchBooks(
   const response = await fetch(`${API_URL}/search.json?${params}`, { signal })
 
   if (!response.ok) {
-    throw new Error(`Open Library respondió con estado ${response.status}`)
+    throw new Error(`Open Library responded with status ${response.status}`)
   }
 
   const data: SearchResponse = await response.json()
@@ -192,7 +192,7 @@ async function fetchWork(id: string, signal?: AbortSignal): Promise<WorkResponse
   }
 
   if (!response.ok) {
-    throw new Error(`Open Library respondió con estado ${response.status}`)
+    throw new Error(`Open Library responded with status ${response.status}`)
   }
 
   return response.json()
@@ -237,7 +237,7 @@ export async function getBookDetail(id: string, signal?: AbortSignal): Promise<B
 
   return {
     id,
-    title: work.title ?? 'Sin título',
+    title: work.title ?? 'Untitled',
     authors: authorNames.filter((name) => name !== null),
     description: description ? toPlainText(description) : null,
     subjects: [...new Set(work.subjects ?? [])]

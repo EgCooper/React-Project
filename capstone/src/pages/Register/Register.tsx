@@ -58,13 +58,13 @@ function Register() {
 
   return (
     <div className={styles.card}>
-      <PageTitle title="Crear cuenta" />
-      <h1 className={styles.title}>Crear cuenta</h1>
+      <PageTitle title="Create account" />
+      <h1 className={styles.title}>Create account</h1>
 
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
         <FormField
           id="register-email"
-          label="Correo electrónico"
+          label="Email"
           type="email"
           autoComplete="email"
           value={email}
@@ -73,17 +73,17 @@ function Register() {
         />
         <FormField
           id="register-password"
-          label="Contraseña"
+          label="Password"
           type="password"
           autoComplete="new-password"
           value={password}
           onChange={setPassword}
           error={errors.password}
-          hint={`Mínimo ${PASSWORD_MIN_LENGTH} caracteres, con una mayúscula, una minúscula y un número.`}
+          hint={`At least ${PASSWORD_MIN_LENGTH} characters, with an uppercase letter, a lowercase letter and a number.`}
         />
         <FormField
           id="register-confirm"
-          label="Confirmar contraseña"
+          label="Confirm password"
           type="password"
           autoComplete="new-password"
           value={confirmPassword}
@@ -98,12 +98,12 @@ function Register() {
           className={`${buttonStyles.primary} ${styles.submit}`}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'}
+          {isSubmitting ? 'Creating account...' : 'Create account'}
         </button>
       </form>
 
       <p className={styles.switch}>
-        ¿Ya tienes cuenta? <Link to="/iniciar-sesion">Inicia sesión</Link>
+        Already have an account? <Link to="/login">Sign in</Link>
       </p>
     </div>
   )

@@ -58,13 +58,13 @@ function Login() {
 
   return (
     <div className={styles.card}>
-      <PageTitle title="Iniciar sesión" />
-      <h1 className={styles.title}>Iniciar sesión</h1>
+      <PageTitle title="Sign in" />
+      <h1 className={styles.title}>Sign in</h1>
 
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
         <FormField
           id="login-email"
-          label="Correo electrónico"
+          label="Email"
           type="email"
           autoComplete="email"
           value={email}
@@ -73,7 +73,7 @@ function Login() {
         />
         <FormField
           id="login-password"
-          label="Contraseña"
+          label="Password"
           type="password"
           autoComplete="current-password"
           value={password}
@@ -88,12 +88,12 @@ function Login() {
           className={`${buttonStyles.primary} ${styles.submit}`}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
         </button>
       </form>
 
       <p className={styles.switch}>
-        ¿No tienes cuenta? <Link to="/registro">Crea una</Link>
+        Don’t have an account? <Link to="/register">Create one</Link>
       </p>
     </div>
   )

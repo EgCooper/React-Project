@@ -32,24 +32,24 @@ describe('Préstamos desde el detalle del libro (integración)', () => {
         HttpResponse.json(loanRow(7, 'OL1W', 'Ficciones', { returned_at: daysFromNow(0) })),
       ),
     )
-    const { user } = renderApp('/libro/OL1W')
+    const { user } = renderApp('/book/OL1W')
 
-    expect(await screen.findByText('Disponible para préstamo.')).toBeInTheDocument()
-    expect(screen.getByText('Plazo: 14 días.')).toBeInTheDocument()
+    expect(await screen.findByText('Available to borrow.')).toBeInTheDocument()
+    expect(screen.getByText('Loan period: 14 days.')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Pedir prestado' }))
+    await user.click(screen.getByRole('button', { name: 'Borrow' }))
 
-    expect(await screen.findByText(/^Lo tienes prestado hasta el/)).toBeInTheDocument()
-    expect(screen.getByText(/^¡Listo! Devuélvelo antes del/)).toBeInTheDocument()
+    expect(await screen.findByText(/^You have it until/)).toBeInTheDocument()
+    expect(screen.getByText(/^Done! Please return it by/)).toBeInTheDocument()
     expect(borrowBody).toEqual({ p_work_id: 'OL1W', p_title: 'Ficciones', p_cover_id: 123 })
     // El mismo botón cambia de texto: quien navega con teclado no pierde su lugar
-    expect(screen.getByRole('button', { name: 'Devolver' })).toHaveFocus()
+    expect(screen.getByRole('button', { name: 'Return' })).toHaveFocus()
 
-    await user.click(screen.getByRole('button', { name: 'Devolver' }))
+    await user.click(screen.getByRole('button', { name: 'Return' }))
 
-    expect(await screen.findByText('Devolviste el libro. ¡Gracias!')).toBeInTheDocument()
-    expect(await screen.findByText('Disponible para préstamo.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Pedir prestado' })).toBeInTheDocument()
+    expect(await screen.findByText('You returned the book. Thank you!')).toBeInTheDocument()
+    expect(await screen.findByText('Available to borrow.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Borrow' })).toBeInTheDocument()
   })
 
   it('si otra persona lo tiene, permite reservarlo y cancelar la reserva', async () => {
@@ -75,36 +75,36 @@ describe('Préstamos desde el detalle del libro (integración)', () => {
         return HttpResponse.json(reservationRow(3, 'OL1W', 'Ficciones'))
       }),
     )
-    const { user } = renderApp('/libro/OL1W')
+    const { user } = renderApp('/book/OL1W')
 
-    expect(await screen.findByText(/^Prestado hasta el/)).toBeInTheDocument()
-    expect(screen.getByText('1 persona en la fila.')).toBeInTheDocument()
+    expect(await screen.findByText(/^On loan until/)).toBeInTheDocument()
+    expect(screen.getByText('1 person in line.')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Reservar' }))
+    await user.click(screen.getByRole('button', { name: 'Reserve' }))
 
-    expect(await screen.findByText('2 personas en la fila. Estás en el lugar 2.')).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Te uniste a la fila.')
+    expect(await screen.findByText('2 people in line. You’re number 2.')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('You joined the line.')
 
-    await user.click(screen.getByRole('button', { name: 'Cancelar reserva' }))
+    await user.click(screen.getByRole('button', { name: 'Cancel reservation' }))
 
-    expect(await screen.findByRole('button', { name: 'Reservar' })).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Cancelaste tu reserva.')
+    expect(await screen.findByRole('button', { name: 'Reserve' })).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('You canceled your reservation.')
   })
 
   it('muestra el mensaje de la regla que no se cumple (ej. límite de préstamos)', async () => {
     server.use(
       http.post(`${SUPABASE_REST_URL}/rpc/borrow_book`, () =>
         HttpResponse.json(
-          { code: 'P0001', message: 'Ya tienes 3 préstamos activos. Devuelve uno para pedir otro.', details: null, hint: null },
+          { code: 'P0001', message: 'You already have 3 active loans. Return one to borrow another.', details: null, hint: null },
           { status: 400 },
         ),
       ),
     )
-    const { user } = renderApp('/libro/OL1W')
+    const { user } = renderApp('/book/OL1W')
 
-    await user.click(await screen.findByRole('button', { name: 'Pedir prestado' }))
+    await user.click(await screen.findByRole('button', { name: 'Borrow' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Ya tienes 3 préstamos activos. Devuelve uno para pedir otro.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('You already have 3 active loans. Return one to borrow another.')
   })
 
   it('guarda y quita el estado de lectura', async () => {
@@ -121,17 +121,17 @@ describe('Préstamos desde el detalle del libro (integración)', () => {
         return new HttpResponse(null, { status: 204 })
       }),
     )
-    const { user } = renderApp('/libro/OL1W')
-    const select = await screen.findByRole('combobox', { name: 'Mi estado de lectura' })
+    const { user } = renderApp('/book/OL1W')
+    const select = await screen.findByRole('combobox', { name: 'My reading status' })
 
-    await user.selectOptions(select, 'Leyendo')
+    await user.selectOptions(select, 'Reading')
 
-    expect(await screen.findByDisplayValue('Leyendo')).toBeInTheDocument()
+    expect(await screen.findByDisplayValue('Reading')).toBeInTheDocument()
     expect(savedStatuses).toEqual(['reading'])
 
-    await user.selectOptions(select, 'Sin estado')
+    await user.selectOptions(select, 'No status')
 
-    expect(await screen.findByDisplayValue('Sin estado')).toBeInTheDocument()
+    expect(await screen.findByDisplayValue('No status')).toBeInTheDocument()
     expect(deleted).toBe(true)
   })
 })

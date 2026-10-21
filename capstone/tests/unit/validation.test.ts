@@ -3,14 +3,14 @@ import { validateEmail, validateLogin, validatePassword, validateRegister } from
 
 describe('validateEmail', () => {
   it('pide el correo si está vacío o solo tiene espacios', () => {
-    expect(validateEmail('')).toBe('Escribe tu correo.')
-    expect(validateEmail('   ')).toBe('Escribe tu correo.')
+    expect(validateEmail('')).toBe('Enter your email.')
+    expect(validateEmail('   ')).toBe('Enter your email.')
   })
 
   it('rechaza correos sin formato algo@algo.algo', () => {
-    expect(validateEmail('ana')).toBe('El correo no tiene un formato válido.')
-    expect(validateEmail('ana@correo')).toBe('El correo no tiene un formato válido.')
-    expect(validateEmail('ana @correo.com')).toBe('El correo no tiene un formato válido.')
+    expect(validateEmail('ana')).toBe('Enter a valid email address.')
+    expect(validateEmail('ana@correo')).toBe('Enter a valid email address.')
+    expect(validateEmail('ana @correo.com')).toBe('Enter a valid email address.')
   })
 
   it('acepta un correo válido aunque tenga espacios alrededor', () => {
@@ -22,10 +22,10 @@ describe('validateEmail', () => {
 describe('validatePassword', () => {
   // it.each: la misma prueba con varios datos; %s se reemplaza por el primer valor de cada fila
   it.each([
-    ['Ab1', 'La contraseña debe tener al menos 8 caracteres.'],
-    ['ABCDEFG1', 'La contraseña debe incluir una letra minúscula.'],
-    ['abcdefg1', 'La contraseña debe incluir una letra mayúscula.'],
-    ['Abcdefgh', 'La contraseña debe incluir un número.'],
+    ['Ab1', 'Password must be at least 8 characters long.'],
+    ['ABCDEFG1', 'Password must include a lowercase letter.'],
+    ['abcdefg1', 'Password must include an uppercase letter.'],
+    ['Abcdefgh', 'Password must include a number.'],
   ])('rechaza "%s"', (password, message) => {
     expect(validatePassword(password)).toBe(message)
   })
@@ -42,7 +42,7 @@ describe('validateRegister', () => {
 
   it('marca las contraseñas que no coinciden', () => {
     const errors = validateRegister({ email: 'ana@correo.com', password: 'Abcdefg1', confirmPassword: 'Abcdefg2' })
-    expect(errors).toEqual({ confirmPassword: 'Las contraseñas no coinciden.' })
+    expect(errors).toEqual({ confirmPassword: 'Passwords do not match.' })
   })
 
   it('devuelve todos los errores a la vez', () => {
@@ -54,6 +54,6 @@ describe('validateRegister', () => {
 describe('validateLogin', () => {
   it('solo exige que haya contraseña, sin reglas de formato', () => {
     expect(validateLogin({ email: 'ana@correo.com', password: 'x' })).toEqual({})
-    expect(validateLogin({ email: 'ana@correo.com', password: '' })).toEqual({ password: 'Escribe tu contraseña.' })
+    expect(validateLogin({ email: 'ana@correo.com', password: '' })).toEqual({ password: 'Enter your password.' })
   })
 })

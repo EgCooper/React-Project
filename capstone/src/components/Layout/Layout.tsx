@@ -37,37 +37,37 @@ function Layout() {
 
   function handleSignOut() {
     signOut().catch(() => {
-      window.alert('No se pudo cerrar la sesión. Intenta de nuevo.')
+      window.alert('Could not sign out. Please try again.')
     })
   }
 
   return (
     <>
       <a href="#contenido" className={styles.skipLink}>
-        Saltar al contenido
+        Skip to content
       </a>
 
       <header className={styles.header}>
         <div className={`${styles.container} ${styles.headerInner}`}>
           <Link to="/" className={styles.brand}>
-            Biblioteca Universitaria
+            University Library
           </Link>
 
-          <nav aria-label="Principal">
+          <nav aria-label="Main">
             <ul className={styles.navList} role="list">
               <li>
                 <NavLink to="/" end className={styles.navLink}>
-                  Catálogo
+                  Catalog
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/mis-prestamos" className={styles.navLink}>
-                  Mis préstamos
+                <NavLink to="/my-loans" className={styles.navLink}>
+                  My loans
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/mis-libros" className={styles.navLink}>
-                  Mis libros
+                <NavLink to="/my-books" className={styles.navLink}>
+                  My books
                   {availableCount > 0 && (
                     <>
                       {/* El número es visual; el lector de pantalla escucha la frase completa */}
@@ -77,8 +77,8 @@ function Layout() {
                       <span className={styles.visuallyHidden}>
                         {/* Empieza con coma: los espacios iniciales se pierden al calcular el nombre del enlace */}
                         {availableCount === 1
-                          ? ', 1 libro de tu lista disponible'
-                          : `, ${availableCount} libros de tu lista disponibles`}
+                          ? ', 1 book from your wishlist available'
+                          : `, ${availableCount} books from your wishlist available`}
                       </span>
                     </>
                   )}
@@ -95,14 +95,14 @@ function Layout() {
                     {user.email}
                   </span>
                   <button type="button" onClick={handleSignOut}>
-                    Cerrar sesión
+                    Sign out
                   </button>
                 </>
               ) : (
                 <>
-                  <Link to="/iniciar-sesion">Iniciar sesión</Link>
-                  <Link to="/registro" className={styles.primaryLink}>
-                    Crear cuenta
+                  <Link to="/login">Sign in</Link>
+                  <Link to="/register" className={styles.primaryLink}>
+                    Create account
                   </Link>
                 </>
               )}
@@ -114,7 +114,7 @@ function Layout() {
       {/* tabIndex={-1}: puede recibir el foco desde "Saltar al contenido" sin entrar en el recorrido con Tab */}
       <main id="contenido" ref={mainRef} className={`${styles.container} ${styles.main}`} tabIndex={-1}>
         {/* Mientras se descarga una página con carga perezosa (React.lazy) se muestra este aviso */}
-        <Suspense fallback={<p className={styles.pageLoading}>Cargando página...</p>}>
+        <Suspense fallback={<p className={styles.pageLoading}>Loading page...</p>}>
           <Outlet />
         </Suspense>
       </main>
@@ -122,7 +122,7 @@ function Layout() {
       <footer className={styles.footer}>
         <div className={styles.container}>
           <p>
-            Biblioteca Universitaria · Datos de libros de <a href="https://openlibrary.org">Open Library</a>
+            University Library · Book data from <a href="https://openlibrary.org">Open Library</a>
           </p>
         </div>
       </footer>

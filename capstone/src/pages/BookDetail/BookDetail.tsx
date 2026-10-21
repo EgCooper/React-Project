@@ -20,26 +20,26 @@ function BookDetail() {
     state.status === 'success'
       ? state.book.title
       : state.status === 'not-found'
-        ? 'Libro no encontrado'
-        : 'Detalle del libro'
+        ? 'Book not found'
+        : 'Book details'
 
   return (
     <>
       <PageTitle title={pageTitle} />
       {canGoBack ? (
         <button type="button" className={styles.back} onClick={() => navigate(-1)}>
-          <span aria-hidden="true">←</span> Volver
+          <span aria-hidden="true">←</span> Back
         </button>
       ) : (
         <Link to="/" className={styles.back}>
-          <span aria-hidden="true">←</span> Ir al catálogo
+          <span aria-hidden="true">←</span> Go to catalog
         </Link>
       )}
 
       {state.status === 'loading' && (
         <>
           <p role="status" className={styles.loadingText}>
-            Cargando libro...
+            Loading book...
           </p>
           {/* Relleno con la misma distribución que el detalle: portada, título, autor y descripción */}
           <div className={styles.detail} aria-hidden="true">
@@ -58,12 +58,12 @@ function BookDetail() {
         </>
       )}
 
-      {state.status === 'error' && <ErrorMessage message="No se pudo cargar el libro." onRetry={retry} />}
+      {state.status === 'error' && <ErrorMessage message="Could not load the book." onRetry={retry} />}
 
       {state.status === 'not-found' && (
         <>
-          <h1>Libro no encontrado</h1>
-          <p>El libro que buscas no existe o fue eliminado del catálogo.</p>
+          <h1>Book not found</h1>
+          <p>The book you’re looking for doesn’t exist or was removed from the catalog.</p>
         </>
       )}
 
@@ -72,7 +72,7 @@ function BookDetail() {
           <BookCover
             coverId={state.book.coverId}
             size="L"
-            alt={`Portada de ${state.book.title}`}
+            alt={`Cover of ${state.book.title}`}
             className={styles.cover}
             emptyClassName={styles.coverEmpty}
           />
@@ -80,7 +80,7 @@ function BookDetail() {
           <div className={styles.info}>
             <h1 className={styles.title}>{state.book.title}</h1>
             <p className={styles.authors}>
-              {state.book.authors.length > 0 ? state.book.authors.join(', ') : 'Autor desconocido'}
+              {state.book.authors.length > 0 ? state.book.authors.join(', ') : 'Unknown author'}
             </p>
 
             <BookLibraryPanel
@@ -88,16 +88,16 @@ function BookDetail() {
             />
 
             {state.book.subjects.length > 0 && (
-              <ul className={styles.subjects} role="list" aria-label="Géneros">
+              <ul className={styles.subjects} role="list" aria-label="Subjects">
                 {state.book.subjects.map((subject) => (
                   <li key={subject}>{subject}</li>
                 ))}
               </ul>
             )}
 
-            <h2 className={styles.sectionTitle}>Descripción</h2>
+            <h2 className={styles.sectionTitle}>Description</h2>
             <p className={styles.description}>
-              {state.book.description ?? 'Este libro no tiene descripción.'}
+              {state.book.description ?? 'This book has no description.'}
             </p>
           </div>
         </article>

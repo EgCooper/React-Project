@@ -19,24 +19,24 @@ function toBookRef(item: Loan | Reservation) {
 // Lugar en la fila de una reserva, a partir de la disponibilidad del libro
 function describeReservation(reservation: Reservation, byWorkId: UseAvailabilityResult['byWorkId']) {
   if (!byWorkId) {
-    return <p className={styles.meta}>En la fila</p>
+    return <p className={styles.meta}>In line</p>
   }
 
   const availability = getBookAvailability(byWorkId.get(reservation.workId), undefined)
 
   if (availability.kind === 'my-turn') {
-    return <p className={styles.good}>¡Es tu turno! Abre el libro para pedirlo prestado.</p>
+    return <p className={styles.good}>It’s your turn! Open the book to borrow it.</p>
   }
 
   if ((availability.kind === 'borrowed' || availability.kind === 'on-hold') && availability.myPosition) {
     return (
       <p className={styles.meta}>
-        Lugar {availability.myPosition} de {availability.queueLength} en la fila
+        Number {availability.myPosition} of {availability.queueLength} in line
       </p>
     )
   }
 
-  return <p className={styles.meta}>En la fila</p>
+  return <p className={styles.meta}>In line</p>
 }
 
 function MyLoans() {
@@ -74,9 +74,9 @@ function MyLoans() {
 
   return (
     <>
-      <PageTitle title="Mis préstamos" />
+      <PageTitle title="My loans" />
       <h1 ref={headingRef} tabIndex={-1}>
-        Mis préstamos
+        My loans
       </h1>
 
       {/* Siempre presente para que el lector de pantalla anuncie cada mensaje nuevo */}
@@ -85,23 +85,23 @@ function MyLoans() {
       </p>
       {error && <ErrorMessage message={error} />}
 
-      {library.status === 'loading' && <p className={styles.loading}>Cargando tus préstamos...</p>}
+      {library.status === 'loading' && <p className={styles.loading}>Loading your loans...</p>}
       {library.status === 'error' && (
-        <ErrorMessage message="No se pudieron cargar tus préstamos." onRetry={library.reload} />
+        <ErrorMessage message="Could not load your loans." onRetry={library.reload} />
       )}
 
       {library.status === 'ready' && (
         <>
           <section className={styles.section} aria-labelledby="active-loans-title">
             <h2 id="active-loans-title" className={styles.sectionTitle}>
-              Préstamos activos
+              Active loans
               <span className={styles.count}>
-                {activeLoans.length} de {MAX_ACTIVE_LOANS}
+                {activeLoans.length} of {MAX_ACTIVE_LOANS}
               </span>
             </h2>
             {activeLoans.length === 0 ? (
               <p className={styles.empty}>
-                No tienes libros prestados. <Link to="/">Explora el catálogo</Link>.
+                You have no books on loan. <Link to="/">Browse the catalog</Link>.
               </p>
             ) : (
               <ul className={styles.list} role="list">
@@ -112,18 +112,18 @@ function MyLoans() {
                     action={
                       <button
                         type="button"
-                        onClick={() => runAction(() => library.returnLoan(loan.id), `Devolviste «${loan.title}».`)}
+                        onClick={() => runAction(() => library.returnLoan(loan.id), `You returned “${loan.title}”.`)}
                         aria-disabled={isRunning}
-                        aria-label={`Devolver ${loan.title}`}
+                        aria-label={`Return ${loan.title}`}
                       >
-                        Devolver
+                        Return
                       </button>
                     }
                   >
                     {isOverdue(loan.dueAt) ? (
-                      <p className={styles.alert}>Venció el {formatDate(loan.dueAt)}. Devuélvelo cuanto antes.</p>
+                      <p className={styles.alert}>Was due on {formatDate(loan.dueAt)}. Please return it as soon as possible.</p>
                     ) : (
-                      <p className={styles.meta}>Devuélvelo antes del {formatDate(loan.dueAt)}</p>
+                      <p className={styles.meta}>Return by {formatDate(loan.dueAt)}</p>
                     )}
                   </LibraryItem>
                 ))}
@@ -133,10 +133,10 @@ function MyLoans() {
 
           <section className={styles.section} aria-labelledby="reservations-title">
             <h2 id="reservations-title" className={styles.sectionTitle}>
-              Reservas
+              Reservations
             </h2>
             {library.reservations.length === 0 ? (
-              <p className={styles.empty}>No tienes reservas. Si un libro está prestado, puedes reservarlo desde su página.</p>
+              <p className={styles.empty}>You have no reservations. If a book is on loan, you can reserve it from its page.</p>
             ) : (
               <ul className={styles.list} role="list">
                 {library.reservations.map((reservation) => (
@@ -149,13 +149,13 @@ function MyLoans() {
                         onClick={() =>
                           runAction(
                             () => library.cancelReservation(reservation.id),
-                            `Cancelaste tu reserva de «${reservation.title}».`,
+                            `You canceled your reservation for “${reservation.title}”.`,
                           )
                         }
                         aria-disabled={isRunning}
-                        aria-label={`Cancelar reserva de ${reservation.title}`}
+                        aria-label={`Cancel reservation for ${reservation.title}`}
                       >
-                        Cancelar reserva
+                        Cancel reservation
                       </button>
                     }
                   >
@@ -168,16 +168,16 @@ function MyLoans() {
 
           <section className={styles.section} aria-labelledby="history-title">
             <h2 id="history-title" className={styles.sectionTitle}>
-              Historial
+              History
             </h2>
             {pastLoans.length === 0 ? (
-              <p className={styles.empty}>Aquí aparecerán los libros que devuelvas.</p>
+              <p className={styles.empty}>Books you return will appear here.</p>
             ) : (
               <ul className={styles.list} role="list">
                 {pastLoans.map((loan) => (
                   <LibraryItem key={loan.id} book={toBookRef(loan)}>
                     <p className={styles.meta}>
-                      Del {formatDate(loan.borrowedAt)} al {formatDate(loan.returnedAt ?? loan.dueAt)}
+                      From {formatDate(loan.borrowedAt)} to {formatDate(loan.returnedAt ?? loan.dueAt)}
                     </p>
                   </LibraryItem>
                 ))}

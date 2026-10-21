@@ -30,13 +30,13 @@ describe('Catálogo (integración)', () => {
     renderApp('/')
 
     // Primera carga: el role="status" avisa y se ven tarjetas de relleno
-    expect(screen.getByRole('status')).toHaveTextContent('Cargando libros...')
+    expect(screen.getByRole('status')).toHaveTextContent('Loading books...')
 
     expect(await screen.findByRole('link', { name: 'Cien años de soledad' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Rayuela' })).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('2 resultados')
+    expect(screen.getByRole('status')).toHaveTextContent('2 results')
     expect(requests[0].get('q')).toBe('language:spa')
-    expect(document.title).toBe('Catálogo · Biblioteca Universitaria')
+    expect(document.title).toBe('Catalog · University Library')
   })
 
   it('buscar muestra los resultados nuevos y atenúa los anteriores mientras carga', async () => {
@@ -50,16 +50,16 @@ describe('Catálogo (integración)', () => {
     const { user } = renderApp('/')
     const oldCard = await screen.findByRole('link', { name: 'Cien años de soledad' })
 
-    await user.type(screen.getByRole('searchbox', { name: 'Buscar libros' }), 'harry')
+    await user.type(screen.getByRole('searchbox', { name: 'Search books' }), 'harry')
 
     // Tras la espera del debounce empieza la búsqueda: los resultados anteriores siguen visibles, atenuados
-    await screen.findByText('Cargando libros...')
+    await screen.findByText('Loading books...')
     expect(oldCard.closest('[aria-busy]')).toHaveAttribute('aria-busy', 'true')
 
     const newCard = await screen.findByRole('link', { name: 'Harry Potter' })
     expect(newCard.closest('[aria-busy]')).toHaveAttribute('aria-busy', 'false')
     expect(screen.queryByRole('link', { name: 'Cien años de soledad' })).not.toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('1 resultados para «harry»')
+    expect(screen.getByRole('status')).toHaveTextContent('1 result for “harry”')
   })
 
   it('muestra la disponibilidad de cada libro con una sola consulta para toda la página', async () => {
@@ -74,8 +74,8 @@ describe('Catálogo (integración)', () => {
     renderApp('/')
 
     const cards = await screen.findAllByRole('article')
-    expect(await within(cards[0]).findByText('Disponible')).toBeInTheDocument()
-    expect(within(cards[1]).getByText('Prestado')).toBeInTheDocument()
+    expect(await within(cards[0]).findByText('Available')).toBeInTheDocument()
+    expect(within(cards[1]).getByText('On loan')).toBeInTheDocument()
     expect(availabilityRequests).toEqual([{ work_ids: ['OL1W', 'OL2W'] }])
   })
 
@@ -84,7 +84,7 @@ describe('Catálogo (integración)', () => {
     const { user } = renderApp('/')
     await screen.findByRole('link', { name: 'Rayuela' })
 
-    await user.selectOptions(screen.getByRole('combobox', { name: 'Categoría' }), 'Ciencia')
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Category' }), 'Science')
 
     await waitFor(() => expect(requests.at(-1)?.get('subject')).toBe('science'))
   })
@@ -94,25 +94,25 @@ describe('Catálogo (integración)', () => {
     const requests = mockSearch(() => searchResponse(DEFAULT_BOOKS, 30))
     const { user } = renderApp('/')
     // 30 resultados de 14 en 14 = 3 páginas
-    expect(await screen.findByText('Página 1 de 3')).toBeInTheDocument()
+    expect(await screen.findByText('Page 1 of 3')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Siguiente' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
-    expect(await screen.findByText('Página 2 de 3')).toBeInTheDocument()
+    expect(await screen.findByText('Page 2 of 3')).toBeInTheDocument()
     expect(requests.at(-1)?.get('page')).toBe('2')
     expect(scrollTo).toHaveBeenCalledWith({ top: 0 })
-    expect(screen.getByRole('button', { name: 'Anterior' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Previous' })).toBeEnabled()
   })
 
   it('sin resultados muestra el estado vacío y "Limpiar" vuelve al catálogo', async () => {
     mockSearch((params) => (params.get('q') === 'zzz' ? searchResponse([]) : searchResponse(DEFAULT_BOOKS)))
     const { user } = renderApp('/?q=zzz')
 
-    expect(await screen.findByText('No se encontraron libros')).toBeInTheDocument()
+    expect(await screen.findByText('No books found')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Limpiar búsqueda y filtros' }))
+    await user.click(screen.getByRole('button', { name: 'Clear search and filters' }))
 
-    expect(screen.getByRole('searchbox', { name: 'Buscar libros' })).toHaveValue('')
+    expect(screen.getByRole('searchbox', { name: 'Search books' })).toHaveValue('')
     expect(await screen.findByRole('link', { name: 'Rayuela' })).toBeInTheDocument()
   })
 
@@ -124,9 +124,9 @@ describe('Catálogo (integración)', () => {
     })
     const { user } = renderApp('/')
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('No se pudieron cargar los libros. Intenta de nuevo.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not load books. Please try again.')
 
-    await user.click(screen.getByRole('button', { name: 'Reintentar' }))
+    await user.click(screen.getByRole('button', { name: 'Retry' }))
 
     expect(await screen.findByRole('link', { name: 'Cien años de soledad' })).toBeInTheDocument()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()

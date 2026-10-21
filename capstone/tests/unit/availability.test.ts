@@ -66,9 +66,9 @@ describe('canBorrow y getAvailabilityLabel', () => {
   })
 
   it('etiquetas cortas para las tarjetas', () => {
-    expect(getAvailabilityLabel({ kind: 'available' })).toBe('Disponible')
-    expect(getAvailabilityLabel({ kind: 'borrowed', dueAt: '', queueLength: 0, myPosition: null })).toBe('Prestado')
-    expect(getAvailabilityLabel({ kind: 'mine', dueAt: '', overdue: true })).toBe('Vencido')
+    expect(getAvailabilityLabel({ kind: 'available' })).toBe('Available')
+    expect(getAvailabilityLabel({ kind: 'borrowed', dueAt: '', queueLength: 0, myPosition: null })).toBe('On loan')
+    expect(getAvailabilityLabel({ kind: 'mine', dueAt: '', overdue: true })).toBe('Overdue')
   })
 })
 

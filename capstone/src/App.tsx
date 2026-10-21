@@ -18,14 +18,14 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="libro/:id" element={<BookDetail />} />
+        <Route path="book/:id" element={<BookDetail />} />
         {/* Rutas privadas: solo se muestran con sesion iniciada */}
         <Route element={<ProtectedRoute />}>
-          <Route path="mis-prestamos" element={<MyLoans />} />
-          <Route path="mis-libros" element={<MyBooks />} />
+          <Route path="my-loans" element={<MyLoans />} />
+          <Route path="my-books" element={<MyBooks />} />
         </Route>
-        <Route path="registro" element={<Register />} />
-        <Route path="iniciar-sesion" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

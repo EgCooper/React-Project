@@ -24,7 +24,7 @@ function LibraryItem({ book, children, action }: LibraryItemProps) {
         loading="lazy"
       />
       <div className={styles.info}>
-        <Link to={`/libro/${book.id}`} className={styles.title}>
+        <Link to={`/book/${book.id}`} className={styles.title}>
           {book.title}
         </Link>
         {children}

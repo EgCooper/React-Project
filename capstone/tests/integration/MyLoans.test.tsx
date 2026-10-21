@@ -31,19 +31,19 @@ describe('Mis préstamos (integración)', () => {
   })
 
   it('muestra préstamos activos (con el vencido marcado), reservas e historial', async () => {
-    renderApp('/mis-prestamos')
+    renderApp('/my-loans')
 
-    const active = await screen.findByRole('region', { name: /Préstamos activos/ })
-    expect(within(active).getByText('2 de 3')).toBeInTheDocument()
-    expect(within(active).getByText(/^Venció el .+ Devuélvelo cuanto antes\.$/)).toBeInTheDocument()
-    expect(within(active).getByText(/^Devuélvelo antes del/)).toBeInTheDocument()
+    const active = await screen.findByRole('region', { name: /Active loans/ })
+    expect(within(active).getByText('2 of 3')).toBeInTheDocument()
+    expect(within(active).getByText(/^Was due on .+ Please return it as soon as possible\.$/)).toBeInTheDocument()
+    expect(within(active).getByText(/^Return by/)).toBeInTheDocument()
 
-    const reservations = screen.getByRole('region', { name: 'Reservas' })
-    expect(await within(reservations).findByText('Lugar 2 de 3 en la fila')).toBeInTheDocument()
+    const reservations = screen.getByRole('region', { name: 'Reservations' })
+    expect(await within(reservations).findByText('Number 2 of 3 in line')).toBeInTheDocument()
 
-    const history = screen.getByRole('region', { name: 'Historial' })
+    const history = screen.getByRole('region', { name: 'History' })
     expect(within(history).getByRole('link', { name: 'El Aleph' })).toBeInTheDocument()
-    expect(within(history).getByText(/^Del .+ al .+$/)).toBeInTheDocument()
+    expect(within(history).getByText(/^From .+ to .+$/)).toBeInTheDocument()
   })
 
   it('al devolver, el libro pasa al historial y el foco vuelve al título', async () => {
@@ -52,24 +52,24 @@ describe('Mis préstamos (integración)', () => {
         HttpResponse.json(loanRow(2, 'OL2W', 'Ficciones', { borrowed_at: daysFromNow(-20), due_at: daysFromNow(-6), returned_at: daysFromNow(0) })),
       ),
     )
-    const { user } = renderApp('/mis-prestamos')
+    const { user } = renderApp('/my-loans')
 
-    await user.click(await screen.findByRole('button', { name: 'Devolver Ficciones' }))
+    await user.click(await screen.findByRole('button', { name: 'Return Ficciones' }))
 
-    expect(await screen.findByText('Devolviste «Ficciones».')).toBeInTheDocument()
-    expect(within(screen.getByRole('region', { name: /Préstamos activos/ })).getByText('1 de 3')).toBeInTheDocument()
-    expect(within(screen.getByRole('region', { name: 'Historial' })).getByRole('link', { name: 'Ficciones' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 1, name: 'Mis préstamos' })).toHaveFocus()
+    expect(await screen.findByText('You returned “Ficciones”.')).toBeInTheDocument()
+    expect(within(screen.getByRole('region', { name: /Active loans/ })).getByText('1 of 3')).toBeInTheDocument()
+    expect(within(screen.getByRole('region', { name: 'History' })).getByRole('link', { name: 'Ficciones' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'My loans' })).toHaveFocus()
   })
 
   it('cancela una reserva', async () => {
     server.use(
       http.post(`${SUPABASE_REST_URL}/rpc/cancel_reservation`, () => HttpResponse.json(reservationRow(9, 'OL9W', 'Pedro Páramo'))),
     )
-    const { user } = renderApp('/mis-prestamos')
+    const { user } = renderApp('/my-loans')
 
-    await user.click(await screen.findByRole('button', { name: 'Cancelar reserva de Pedro Páramo' }))
+    await user.click(await screen.findByRole('button', { name: 'Cancel reservation for Pedro Páramo' }))
 
-    expect(await screen.findByText(/^No tienes reservas/)).toBeInTheDocument()
+    expect(await screen.findByText(/^You have no reservations/)).toBeInTheDocument()
   })
 })

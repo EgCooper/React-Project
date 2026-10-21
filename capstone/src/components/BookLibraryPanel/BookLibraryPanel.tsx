@@ -26,17 +26,17 @@ interface PanelAction {
 function describeAvailability(availability: BookAvailability): string {
   switch (availability.kind) {
     case 'available':
-      return 'Disponible para préstamo.'
+      return 'Available to borrow.'
     case 'mine':
       return availability.overdue
-        ? `Tu préstamo venció el ${formatDate(availability.dueAt)}. Devuélvelo cuanto antes.`
-        : `Lo tienes prestado hasta el ${formatDate(availability.dueAt)}.`
+        ? `Your loan was due on ${formatDate(availability.dueAt)}. Please return it as soon as possible.`
+        : `You have it until ${formatDate(availability.dueAt)}.`
     case 'borrowed':
-      return `Prestado hasta el ${formatDate(availability.dueAt)}.`
+      return `On loan until ${formatDate(availability.dueAt)}.`
     case 'my-turn':
-      return '¡Es tu turno! El libro está apartado para ti.'
+      return 'It’s your turn! The book is on hold for you.'
     case 'on-hold':
-      return 'Apartado para la siguiente persona de la fila.'
+      return 'On hold for the next person in line.'
   }
 }
 
@@ -45,9 +45,9 @@ function describeQueue(availability: BookAvailability): string | null {
     return null
   }
 
-  const people = availability.queueLength === 1 ? '1 persona' : `${availability.queueLength} personas`
-  const position = availability.myPosition ? ` Estás en el lugar ${availability.myPosition}.` : ''
-  return availability.queueLength > 0 ? `${people} en la fila.${position}` : null
+  const people = availability.queueLength === 1 ? '1 person' : `${availability.queueLength} people`
+  const position = availability.myPosition ? ` You’re number ${availability.myPosition}.` : ''
+  return availability.queueLength > 0 ? `${people} in line.${position}` : null
 }
 
 // Disponibilidad del libro y lo que el usuario puede hacer con él (requisitos 1, 3 y 4 del enunciado)
@@ -75,43 +75,43 @@ function BookLibraryPanel({ book }: BookLibraryPanelProps) {
 
     if (myLoan) {
       return {
-        label: 'Devolver',
+        label: 'Return',
         isPrimary: false,
         run: async () => {
           await library.returnLoan(myLoan.id)
-          return 'Devolviste el libro. ¡Gracias!'
+          return 'You returned the book. Thank you!'
         },
       }
     }
 
     if (canBorrow(availability)) {
       return {
-        label: 'Pedir prestado',
+        label: 'Borrow',
         isPrimary: true,
         run: async () => {
           const loan = await library.borrow(book)
-          return `¡Listo! Devuélvelo antes del ${formatDate(loan.dueAt)}.`
+          return `Done! Please return it by ${formatDate(loan.dueAt)}.`
         },
       }
     }
 
     if (myReservation) {
       return {
-        label: 'Cancelar reserva',
+        label: 'Cancel reservation',
         isPrimary: false,
         run: async () => {
           await library.cancelReservation(myReservation.id)
-          return 'Cancelaste tu reserva.'
+          return 'You canceled your reservation.'
         },
       }
     }
 
     return {
-      label: 'Reservar',
+      label: 'Reserve',
       isPrimary: true,
       run: async () => {
         await library.reserve(book)
-        return 'Te uniste a la fila. Cuando sea tu turno lo verás aquí y en "Mis préstamos".'
+        return 'You joined the line. When it’s your turn you’ll see it here and in “My loans”.'
       },
     }
   }
@@ -142,7 +142,7 @@ function BookLibraryPanel({ book }: BookLibraryPanelProps) {
   return (
     <section className={styles.panel} aria-labelledby="library-panel-title">
       <h2 id="library-panel-title" className={styles.heading}>
-        Disponibilidad
+        Availability
       </h2>
 
       {availability ? (
@@ -154,20 +154,20 @@ function BookLibraryPanel({ book }: BookLibraryPanelProps) {
         </>
       ) : (
         <p className={styles.hint}>
-          {availabilityStatus === 'error' ? 'No se pudo consultar la disponibilidad.' : 'Consultando disponibilidad...'}
+          {availabilityStatus === 'error' ? 'Could not check availability.' : 'Checking availability...'}
         </p>
       )}
 
       {library.status === 'error' && (
-        <ErrorMessage message="No se pudieron cargar tus préstamos." onRetry={library.reload} />
+        <ErrorMessage message="Could not load your loans." onRetry={library.reload} />
       )}
 
       {library.status === 'signed-out' && (
         <p className={styles.hint}>
-          <Link to="/iniciar-sesion" state={{ from: location.pathname }}>
-            Inicia sesión
+          <Link to="/login" state={{ from: location.pathname }}>
+            Sign in
           </Link>{' '}
-          para pedirlo prestado, reservarlo o guardarlo en tu lista.
+          to borrow it, reserve it or save it to your list.
         </p>
       )}
 
@@ -180,9 +180,9 @@ function BookLibraryPanel({ book }: BookLibraryPanelProps) {
             onClick={() => handleAction(action)}
             aria-disabled={isRunning}
           >
-            {isRunning ? 'Procesando...' : action.label}
+            {isRunning ? 'Processing...' : action.label}
           </button>
-          {action.label === 'Pedir prestado' && <span className={styles.hint}>Plazo: {LOAN_DAYS} días.</span>}
+          {action.label === 'Borrow' && <span className={styles.hint}>Loan period: {LOAN_DAYS} days.</span>}
         </div>
       )}
 

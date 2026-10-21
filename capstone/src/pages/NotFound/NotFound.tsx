@@ -4,10 +4,10 @@ import PageTitle from '../../components/PageTitle/PageTitle.tsx'
 function NotFound() {
   return (
     <>
-      <PageTitle title="Página no encontrada" />
-      <h1>Página no encontrada</h1>
-      <p>La dirección que abriste no existe en la biblioteca.</p>
-      <Link to="/">Volver al catálogo</Link>
+      <PageTitle title="Page not found" />
+      <h1>Page not found</h1>
+      <p>The address you opened doesn’t exist in the library.</p>
+      <Link to="/">Back to catalog</Link>
     </>
   )
 }

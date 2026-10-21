@@ -5,7 +5,7 @@ export function useLibrary(): LibraryContextValue {
   const context = useContext(LibraryContext)
 
   if (!context) {
-    throw new Error('useLibrary debe usarse dentro de <LibraryProvider>')
+    throw new Error('useLibrary must be used inside <LibraryProvider>')
   }
 
   return context

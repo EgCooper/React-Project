@@ -13,11 +13,11 @@ export type RegisterErrors = Partial<Record<keyof RegisterValues, string>>
 
 export function validateEmail(email: string): string | null {
   if (!email.trim()) {
-    return 'Escribe tu correo.'
+    return 'Enter your email.'
   }
 
   if (!EMAIL_PATTERN.test(email.trim())) {
-    return 'El correo no tiene un formato válido.'
+    return 'Enter a valid email address.'
   }
 
   return null
@@ -26,19 +26,19 @@ export function validateEmail(email: string): string | null {
 // Mismas reglas que configuramos en Supabase: 8 caracteres, minuscula, mayuscula y digito
 export function validatePassword(password: string): string | null {
   if (password.length < PASSWORD_MIN_LENGTH) {
-    return `La contraseña debe tener al menos ${PASSWORD_MIN_LENGTH} caracteres.`
+    return `Password must be at least ${PASSWORD_MIN_LENGTH} characters long.`
   }
 
   if (!/[a-z]/.test(password)) {
-    return 'La contraseña debe incluir una letra minúscula.'
+    return 'Password must include a lowercase letter.'
   }
 
   if (!/[A-Z]/.test(password)) {
-    return 'La contraseña debe incluir una letra mayúscula.'
+    return 'Password must include an uppercase letter.'
   }
 
   if (!/[0-9]/.test(password)) {
-    return 'La contraseña debe incluir un número.'
+    return 'Password must include a number.'
   }
 
   return null
@@ -58,7 +58,7 @@ export function validateRegister(values: RegisterValues): RegisterErrors {
   }
 
   if (values.confirmPassword !== values.password) {
-    errors.confirmPassword = 'Las contraseñas no coinciden.'
+    errors.confirmPassword = 'Passwords do not match.'
   }
 
   return errors
@@ -81,7 +81,7 @@ export function validateLogin(values: LoginValues): LoginErrors {
   }
 
   if (!values.password) {
-    errors.password = 'Escribe tu contraseña.'
+    errors.password = 'Enter your password.'
   }
 
   return errors

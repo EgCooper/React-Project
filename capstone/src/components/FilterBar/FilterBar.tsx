@@ -12,14 +12,14 @@ function FilterBar({ category, sort, onCategoryChange, onSortChange }: FilterBar
   return (
     <div className={styles.bar}>
       <div className={styles.field}>
-        <label htmlFor="category-filter">Categoría</label>
+        <label htmlFor="category-filter">Category</label>
         <select
           id="category-filter"
           className={styles.select}
           value={category}
           onChange={(event) => onCategoryChange(event.target.value)}
         >
-          <option value="">Todas</option>
+          <option value="">All</option>
           {CATEGORIES.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -29,7 +29,7 @@ function FilterBar({ category, sort, onCategoryChange, onSortChange }: FilterBar
       </div>
 
       <div className={styles.field}>
-        <label htmlFor="sort-filter">Ordenar por</label>
+        <label htmlFor="sort-filter">Sort by</label>
         <select
           id="sort-filter"
           className={styles.select}

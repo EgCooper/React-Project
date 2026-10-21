@@ -23,12 +23,12 @@ function BookCard({ book, availability }: BookCardProps) {
       />
       <div className={styles.body}>
         <h2 className={styles.title}>
-          <Link to={`/libro/${book.id}`} className={styles.link}>
+          <Link to={`/book/${book.id}`} className={styles.link}>
             {book.title}
           </Link>
         </h2>
         <p className={`${styles.meta} ${styles.authors}`}>
-          {book.authors.length > 0 ? book.authors.join(', ') : 'Autor desconocido'}
+          {book.authors.length > 0 ? book.authors.join(', ') : 'Unknown author'}
         </p>
         <div className={styles.footer}>
           {book.firstPublishYear !== null && <p className={styles.meta}>{book.firstPublishYear}</p>}

@@ -28,9 +28,9 @@ function Home() {
   const query = isSearching ? debouncedText : DEFAULT_QUERY
 
   // La URL la puede editar cualquiera: solo aceptamos valores que existan en las listas
-  const category = CATEGORIES.find((option) => option.value === searchParams.get('categoria'))?.value ?? null
-  const sort = SORT_OPTIONS.find((option) => option.value === searchParams.get('orden'))?.value ?? 'relevance'
-  const page = parsePage(searchParams.get('pagina'))
+  const category = CATEGORIES.find((option) => option.value === searchParams.get('category'))?.value ?? null
+  const sort = SORT_OPTIONS.find((option) => option.value === searchParams.get('sort'))?.value ?? 'relevance'
+  const page = parsePage(searchParams.get('page'))
 
   const { books, total, isLoading, error, retry } = useBooks({ query, page, subject: category, sort })
   // Al ordenar por autor solo se pueden recorrer los primeros AUTHOR_SORT_LIMIT resultados
@@ -52,7 +52,7 @@ function Home() {
           params.delete(name)
         }
         // Cualquier cambio de busqueda o filtro vuelve a la pagina 1
-        params.delete('pagina')
+        params.delete('page')
         return params
       },
       { replace: true },
@@ -63,9 +63,9 @@ function Home() {
   function goToPage(newPage: number) {
     setSearchParams((params) => {
       if (newPage > 1) {
-        params.set('pagina', String(newPage))
+        params.set('page', String(newPage))
       } else {
-        params.delete('pagina')
+        params.delete('page')
       }
       return params
     })
@@ -77,8 +77,8 @@ function Home() {
     setSearchParams(
       (params) => {
         params.delete('q')
-        params.delete('categoria')
-        params.delete('pagina')
+        params.delete('category')
+        params.delete('page')
         return params
       },
       { replace: true },
@@ -87,15 +87,15 @@ function Home() {
 
   return (
     <>
-      <PageTitle title="Catálogo" />
-      <h1>Catálogo</h1>
+      <PageTitle title="Catalog" />
+      <h1>Catalog</h1>
       <div className={styles.toolbar}>
         <SearchBar value={searchText} onChange={(value) => updateParam('q', value)} />
         <FilterBar
           category={category ?? ''}
           sort={sort}
-          onCategoryChange={(value) => updateParam('categoria', value)}
-          onSortChange={(value) => updateParam('orden', value)}
+          onCategoryChange={(value) => updateParam('category', value)}
+          onSortChange={(value) => updateParam('sort', value)}
         />
       </div>
 
@@ -106,17 +106,17 @@ function Home() {
           {/* Siempre presente: el lector de pantalla anuncia cada cambio de texto ("Cargando..." → "120 resultados") */}
           <p className={styles.summary} role="status">
             {isLoading ? (
-              'Cargando libros...'
+              'Loading books...'
             ) : (
               <>
-                {total.toLocaleString('es')} resultados
-                {isSearching && <> para «{debouncedText}»</>}
+                {total.toLocaleString('en')} {total === 1 ? 'result' : 'results'}
+                {isSearching && <> for “{debouncedText}”</>}
               </>
             )}
           </p>
           {!isLoading && isAuthorSort && total > AUTHOR_SORT_LIMIT && (
             <p className={styles.summary}>
-              Ordenados por autor entre los {AUTHOR_SORT_LIMIT} resultados más relevantes.
+              Sorted by author among the {AUTHOR_SORT_LIMIT} most relevant results.
             </p>
           )}
 
@@ -149,11 +149,11 @@ function Home() {
             </ul>
           ) : (
             <div className={styles.empty}>
-              <p className={styles.emptyTitle}>No se encontraron libros</p>
-              <p className={styles.emptyHint}>Prueba con otras palabras o con otra categoría.</p>
+              <p className={styles.emptyTitle}>No books found</p>
+              <p className={styles.emptyHint}>Try other words or another category.</p>
               {hasFilters && (
                 <button type="button" onClick={clearFilters}>
-                  Limpiar búsqueda y filtros
+                  Clear search and filters
                 </button>
               )}
             </div>

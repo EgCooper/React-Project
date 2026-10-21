@@ -59,14 +59,14 @@ export function canBorrow(availability: BookAvailability): boolean {
 export function getAvailabilityLabel(availability: BookAvailability): string {
   switch (availability.kind) {
     case 'available':
-      return 'Disponible'
+      return 'Available'
     case 'mine':
-      return availability.overdue ? 'Vencido' : 'Lo tienes'
+      return availability.overdue ? 'Overdue' : 'You have it'
     case 'borrowed':
-      return 'Prestado'
+      return 'On loan'
     case 'my-turn':
-      return 'Es tu turno'
+      return 'Your turn'
     case 'on-hold':
-      return 'Apartado'
+      return 'On hold'
   }
 }

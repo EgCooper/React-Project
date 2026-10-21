@@ -34,7 +34,7 @@ function ReadingStatusField({ book, entry }: ReadingStatusFieldProps) {
 
   return (
     <div className={styles.reading}>
-      <label htmlFor="reading-status">Mi estado de lectura</label>
+      <label htmlFor="reading-status">My reading status</label>
       {/* No se deshabilita mientras guarda: un control deshabilitado pierde el foco del teclado */}
       <select
         id="reading-status"
@@ -43,7 +43,7 @@ function ReadingStatusField({ book, entry }: ReadingStatusFieldProps) {
         onChange={(event) => handleChange(event.target.value)}
         aria-describedby="reading-status-hint"
       >
-        <option value="">Sin estado</option>
+        <option value="">No status</option>
         {READING_STATUS_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
@@ -51,7 +51,7 @@ function ReadingStatusField({ book, entry }: ReadingStatusFieldProps) {
         ))}
       </select>
       <p id="reading-status-hint" className={styles.hint}>
-        {isSaving ? 'Guardando...' : 'Lo verás en "Mis libros".'}
+        {isSaving ? 'Saving...' : 'You’ll see it in “My books”.'}
       </p>
       {error && <ErrorMessage message={error} />}
     </div>

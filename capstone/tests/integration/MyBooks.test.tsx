@@ -36,18 +36,18 @@ describe('Mis libros y aviso de la lista de deseos (integración)', () => {
   })
 
   it('avisa qué libros de la lista de deseos están disponibles, también en el menú', async () => {
-    renderApp('/mis-libros')
+    renderApp('/my-books')
 
-    const wishlist = await screen.findByRole('region', { name: /Lista de deseos/ })
-    expect(await within(wishlist).findByText('¡Disponible! Ábrelo para pedirlo prestado.')).toBeInTheDocument()
-    expect(within(wishlist).getByText(/^Prestado hasta el/)).toBeInTheDocument()
-    expect(within(wishlist).getByText('1 disponible')).toBeInTheDocument()
+    const wishlist = await screen.findByRole('region', { name: /Wishlist/ })
+    expect(await within(wishlist).findByText('Available! Open it to borrow it.')).toBeInTheDocument()
+    expect(within(wishlist).getByText(/^On loan until/)).toBeInTheDocument()
+    expect(within(wishlist).getByText('1 available')).toBeInTheDocument()
 
     // El aviso del menú se lee completo con lector de pantalla
-    expect(await screen.findByRole('link', { name: 'Mis libros, 1 libro de tu lista disponible' })).toBeInTheDocument()
+    expect(await screen.findByRole('link', { name: 'My books, 1 book from your wishlist available' })).toBeInTheDocument()
 
-    expect(within(screen.getByRole('region', { name: 'Leyendo' })).getByRole('link', { name: 'El Aleph' })).toBeInTheDocument()
-    expect(within(screen.getByRole('region', { name: 'Completados' })).getByRole('link', { name: 'Pedro Páramo' })).toBeInTheDocument()
+    expect(within(screen.getByRole('region', { name: 'Reading' })).getByRole('link', { name: 'El Aleph' })).toBeInTheDocument()
+    expect(within(screen.getByRole('region', { name: 'Completed' })).getByRole('link', { name: 'Pedro Páramo' })).toBeInTheDocument()
   })
 
   it('quitar un libro de la lista también actualiza el aviso del menú', async () => {
@@ -58,12 +58,12 @@ describe('Mis libros y aviso de la lista de deseos (integración)', () => {
         return new HttpResponse(null, { status: 204 })
       }),
     )
-    const { user } = renderApp('/mis-libros')
+    const { user } = renderApp('/my-books')
 
-    await user.click(await screen.findByRole('button', { name: 'Quitar Ficciones de tus libros' }))
+    await user.click(await screen.findByRole('button', { name: 'Remove Ficciones from your books' }))
 
-    expect(await screen.findByText('Quitaste «Ficciones».')).toBeInTheDocument()
+    expect(await screen.findByText('You removed “Ficciones”.')).toBeInTheDocument()
     expect(deletedUrl?.searchParams.get('work_id')).toBe('eq.OL1W')
-    expect(screen.getByRole('link', { name: 'Mis libros' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'My books' })).toBeInTheDocument()
   })
 })

@@ -16,7 +16,7 @@ function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
       </p>
       {onRetry && (
         <button type="button" className={buttonStyles.primary} onClick={onRetry}>
-          Reintentar
+          Retry
         </button>
       )}
     </div>

@@ -127,7 +127,7 @@ describe('getLibraryErrorMessage', () => {
     server.use(
       http.post(`${REST_URL}/rpc/borrow_book`, () =>
         HttpResponse.json(
-          { code: 'P0001', message: 'Ya tienes 3 préstamos activos. Devuelve uno para pedir otro.', details: null, hint: null },
+          { code: 'P0001', message: 'You already have 3 active loans. Return one to borrow another.', details: null, hint: null },
           { status: 400 },
         ),
       ),
@@ -136,7 +136,7 @@ describe('getLibraryErrorMessage', () => {
     const error = await borrowBook(BOOK).catch((caught: unknown) => caught)
 
     expect(error).toMatchObject({ code: 'P0001' })
-    expect(getLibraryErrorMessage(error)).toBe('Ya tienes 3 préstamos activos. Devuelve uno para pedir otro.')
+    expect(getLibraryErrorMessage(error)).toBe('You already have 3 active loans. Return one to borrow another.')
   })
 
   it('oculta los errores técnicos detrás de un mensaje genérico', async () => {
@@ -151,7 +151,7 @@ describe('getLibraryErrorMessage', () => {
 
     const error = await borrowBook(BOOK).catch((caught: unknown) => caught)
 
-    expect(getLibraryErrorMessage(error)).toBe('No se pudo completar la operación. Intenta de nuevo.')
-    expect(getLibraryErrorMessage(new Error('Failed to fetch'))).toBe('No se pudo completar la operación. Intenta de nuevo.')
+    expect(getLibraryErrorMessage(error)).toBe('Something went wrong. Please try again.')
+    expect(getLibraryErrorMessage(new Error('Failed to fetch'))).toBe('Something went wrong. Please try again.')
   })
 })

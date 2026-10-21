@@ -4,7 +4,7 @@ import { formatDate, isOverdue } from '../../src/utils/date.ts'
 describe('formatDate', () => {
   it('muestra la fecha en español', () => {
     // Mediodía UTC: el día no cambia en ninguna zona horaria de América
-    expect(formatDate('2026-10-27T12:00:00Z')).toBe('27 de octubre de 2026')
+    expect(formatDate('2026-10-27T12:00:00Z')).toBe('October 27, 2026')
   })
 })
 

@@ -138,26 +138,26 @@ declare
   v_loan public.loans;
 begin
   if v_user_id is null then
-    raise exception 'Inicia sesión para pedir un libro.';
+    raise exception 'Sign in to borrow a book.';
   end if;
 
   if exists (select 1 from public.loans
              where work_id = p_work_id and returned_at is null and user_id = v_user_id) then
-    raise exception 'Ya tienes este libro prestado.';
+    raise exception 'You already have this book on loan.';
   end if;
 
   if exists (select 1 from public.loans where work_id = p_work_id and returned_at is null) then
-    raise exception 'Este libro ya está prestado. Puedes reservarlo.';
+    raise exception 'This book is already on loan. You can reserve it.';
   end if;
 
   -- Máximo 3 préstamos activos por usuario
   if (select count(*) from public.loans where user_id = v_user_id and returned_at is null) >= 3 then
-    raise exception 'Ya tienes 3 préstamos activos. Devuelve uno para pedir otro.';
+    raise exception 'You already have 3 active loans. Return one to borrow another.';
   end if;
 
   if exists (select 1 from public.loans
              where user_id = v_user_id and returned_at is null and due_at < now()) then
-    raise exception 'Tienes un préstamo vencido. Devuélvelo para pedir otro.';
+    raise exception 'You have an overdue loan. Return it to borrow another.';
   end if;
 
   -- Si hay fila de espera, solo puede llevárselo el primero
@@ -168,7 +168,7 @@ begin
   limit 1;
 
   if v_first_in_line is not null and v_first_in_line <> v_user_id then
-    raise exception 'Este libro está reservado para otra persona. Puedes unirte a la fila.';
+    raise exception 'This book is on hold for someone else. You can join the line.';
   end if;
 
   begin
@@ -178,7 +178,7 @@ begin
     returning * into v_loan;
   exception when unique_violation then
     -- Otra persona lo pidió en el mismo instante: el índice único lo impidió
-    raise exception 'Este libro ya está prestado. Puedes reservarlo.';
+    raise exception 'This book is already on loan. You can reserve it.';
   end;
 
   -- Si el usuario estaba en la fila de este libro, su reserva se cumplió
@@ -206,7 +206,7 @@ begin
   returning * into v_loan;
 
   if not found then
-    raise exception 'No encontramos ese préstamo activo.';
+    raise exception 'We could not find that active loan.';
   end if;
 
   return v_loan;
@@ -226,18 +226,18 @@ declare
   v_reservation public.reservations;
 begin
   if v_user_id is null then
-    raise exception 'Inicia sesión para reservar un libro.';
+    raise exception 'Sign in to reserve a book.';
   end if;
 
   if exists (select 1 from public.loans
              where work_id = p_work_id and returned_at is null and user_id = v_user_id) then
-    raise exception 'Ya tienes este libro prestado.';
+    raise exception 'You already have this book on loan.';
   end if;
 
   -- Solo se reserva lo que no está disponible: prestado a otra persona o con fila de espera
   if not exists (select 1 from public.loans where work_id = p_work_id and returned_at is null)
      and not exists (select 1 from public.reservations where work_id = p_work_id and status = 'active') then
-    raise exception 'Este libro está disponible: puedes pedirlo prestado.';
+    raise exception 'This book is available: you can borrow it.';
   end if;
 
   begin
@@ -245,7 +245,7 @@ begin
     values (v_user_id, p_work_id, left(trim(p_title), 500), p_cover_id)
     returning * into v_reservation;
   exception when unique_violation then
-    raise exception 'Ya estás en la fila de este libro.';
+    raise exception 'You are already in line for this book.';
   end;
 
   return v_reservation;
@@ -268,7 +268,7 @@ begin
   returning * into v_reservation;
 
   if not found then
-    raise exception 'No encontramos esa reserva activa.';
+    raise exception 'We could not find that active reservation.';
   end if;
 
   return v_reservation;

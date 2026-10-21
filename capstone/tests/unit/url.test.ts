@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { getRedirectPath, parsePage } from '../../src/utils/url.ts'
 
 describe('parsePage', () => {
-  it('convierte ?pagina= válido en número', () => {
+  it('convierte ?page= válido en número', () => {
     expect(parsePage('3')).toBe(3)
   })
 

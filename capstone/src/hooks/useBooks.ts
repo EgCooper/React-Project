@@ -47,7 +47,7 @@ export function useBooks({ query, page, subject, sort }: BookSearchOptions) {
       })
       .catch(() => {
         if (!controller.signal.aborted) {
-          dispatch({ type: 'error', key: requestKey, message: 'No se pudieron cargar los libros. Intenta de nuevo.' })
+          dispatch({ type: 'error', key: requestKey, message: 'Could not load books. Please try again.' })
         }
       })
 

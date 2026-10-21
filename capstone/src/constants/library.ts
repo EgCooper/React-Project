@@ -6,7 +6,7 @@ export const LOAN_DAYS = 14
 export const MAX_ACTIVE_LOANS = 3
 
 export const READING_STATUS_OPTIONS: { value: ReadingStatus; label: string }[] = [
-  { value: 'wishlist', label: 'Lista de deseos' },
-  { value: 'reading', label: 'Leyendo' },
-  { value: 'completed', label: 'Completado' },
+  { value: 'wishlist', label: 'Wishlist' },
+  { value: 'reading', label: 'Reading' },
+  { value: 'completed', label: 'Completed' },
 ]

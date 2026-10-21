@@ -20,7 +20,7 @@ function BookCover({ coverId, size, alt, className, emptyClassName, loading }: B
   if (coverId === null || failedCoverId === coverId) {
     return (
       <div className={`${className} ${emptyClassName}`} aria-hidden="true">
-        Sin portada
+        No cover
       </div>
     )
   }

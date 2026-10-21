@@ -11,7 +11,7 @@ import { canBorrow, type BookAvailability } from '../../utils/availability.ts'
 import { formatDate } from '../../utils/date.ts'
 import styles from '../../styles/libraryPage.module.css'
 
-const titleCollator = new Intl.Collator('es', { sensitivity: 'base' })
+const titleCollator = new Intl.Collator('en', { sensitivity: 'base' })
 
 function byTitle(a: ReadingEntry, b: ReadingEntry) {
   return titleCollator.compare(a.title, b.title)
@@ -24,20 +24,20 @@ function toBookRef(entry: ReadingEntry) {
 // Aviso de disponibilidad de un libro de la lista de deseos
 function describeWishlistAvailability(availability: BookAvailability | null) {
   if (!availability) {
-    return <p className={styles.meta}>Consultando disponibilidad...</p>
+    return <p className={styles.meta}>Checking availability...</p>
   }
 
   if (canBorrow(availability)) {
-    return <p className={styles.good}>¡Disponible! Ábrelo para pedirlo prestado.</p>
+    return <p className={styles.good}>Available! Open it to borrow it.</p>
   }
 
   switch (availability.kind) {
     case 'mine':
-      return <p className={styles.meta}>Ya lo tienes prestado.</p>
+      return <p className={styles.meta}>You already have it on loan.</p>
     case 'borrowed':
-      return <p className={styles.meta}>Prestado hasta el {formatDate(availability.dueAt)}</p>
+      return <p className={styles.meta}>On loan until {formatDate(availability.dueAt)}</p>
     default:
-      return <p className={styles.meta}>Apartado para alguien de la fila</p>
+      return <p className={styles.meta}>On hold for someone in line</p>
   }
 }
 
@@ -64,7 +64,7 @@ function MyBooks() {
 
     try {
       await library.setReadingStatus(toBookRef(entry), null)
-      setFeedback(`Quitaste «${entry.title}».`)
+      setFeedback(`You removed “${entry.title}”.`)
       headingRef.current?.focus()
     } catch (caught) {
       setError(getLibraryErrorMessage(caught))
@@ -79,9 +79,9 @@ function MyBooks() {
         type="button"
         onClick={() => remove(entry)}
         aria-disabled={isRunning}
-        aria-label={`Quitar ${entry.title} de tus libros`}
+        aria-label={`Remove ${entry.title} from your books`}
       >
-        Quitar
+        Remove
       </button>
     )
   }
@@ -102,13 +102,13 @@ function MyBooks() {
 
   return (
     <>
-      <PageTitle title="Mis libros" />
+      <PageTitle title="My books" />
       <h1 ref={headingRef} tabIndex={-1}>
-        Mis libros
+        My books
       </h1>
       <p className={styles.intro}>
-        Marca cada libro como <em>Lista de deseos</em>, <em>Leyendo</em> o <em>Completado</em> desde su página. Te
-        avisamos aquí y en el menú cuando un libro de tu lista de deseos esté disponible.
+        Mark each book as <em>Wishlist</em>, <em>Reading</em> or <em>Completed</em> from its page. We’ll let you
+        know here and in the menu when a book from your wishlist becomes available.
       </p>
 
       <p role="status" className={styles.feedback}>
@@ -116,23 +116,23 @@ function MyBooks() {
       </p>
       {error && <ErrorMessage message={error} />}
 
-      {library.status === 'loading' && <p className={styles.loading}>Cargando tus libros...</p>}
-      {library.status === 'error' && <ErrorMessage message="No se pudieron cargar tus libros." onRetry={library.reload} />}
+      {library.status === 'loading' && <p className={styles.loading}>Loading your books...</p>}
+      {library.status === 'error' && <ErrorMessage message="Could not load your books." onRetry={library.reload} />}
 
       {library.status === 'ready' && (
         <>
           <section className={styles.section} aria-labelledby="wishlist-title">
             <h2 id="wishlist-title" className={styles.sectionTitle}>
-              Lista de deseos
+              Wishlist
               {availableCount > 0 && (
                 <span className={styles.count}>
-                  {availableCount === 1 ? '1 disponible' : `${availableCount} disponibles`}
+                  {`${availableCount} available`}
                 </span>
               )}
             </h2>
             {sortedWishlist.length === 0 ? (
               <p className={styles.empty}>
-                Tu lista está vacía. <Link to="/">Busca un libro</Link> y elige “Lista de deseos” en su página.
+                Your wishlist is empty. <Link to="/">Find a book</Link> and choose “Wishlist” on its page.
               </p>
             ) : (
               <ul className={styles.list} role="list">
@@ -147,16 +147,16 @@ function MyBooks() {
 
           <section className={styles.section} aria-labelledby="reading-title">
             <h2 id="reading-title" className={styles.sectionTitle}>
-              Leyendo
+              Reading
             </h2>
-            {renderSimpleList(reading, 'No estás leyendo ningún libro.')}
+            {renderSimpleList(reading, 'You’re not reading any books.')}
           </section>
 
           <section className={styles.section} aria-labelledby="completed-title">
             <h2 id="completed-title" className={styles.sectionTitle}>
-              Completados
+              Completed
             </h2>
-            {renderSimpleList(completed, 'Todavía no marcaste libros como completados.')}
+            {renderSimpleList(completed, 'You haven’t marked any books as completed yet.')}
           </section>
         </>
       )}
